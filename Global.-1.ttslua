@@ -1512,12 +1512,13 @@ for i, card in ipairs(takethose) do
     getObjectFromGUID(LoyaltyCylonBag).takeObject(params)
 end
 
-
-
-
-
-
-
+-- Eric Modification
+if selectedexpansion[3] == true then
+    local rotation = {180 , 0,  0}
+    position['x'] = 5.25
+    takeobj('MutinyCards','Null',position,rotation,TQMOBag)
+end
+-- END Eric Modification
 
 if specialcyloncard == true then
     Title = 'SympathizerCylon'
@@ -1525,10 +1526,10 @@ if specialcyloncard == true then
         Title = 'SympatheticCylon'
     end
     if selectedexpansion[3] == true then
-        local rotation = {180 , 0,  0}
+        -- local rotation = {180 , 0,  0}
         Title = 'Mutineer'
-        position['x'] = 5.25
-        takeobj('MutinyCards','Null',position,rotation,TQMOBag)
+        -- position['x'] = 5.25
+        -- takeobj('MutinyCards','Null',position,rotation,TQMOBag)
     end
     local rotation = {180 , 0,  180}
     position['x'] = 2.75
@@ -1658,14 +1659,14 @@ function onload()
   isCylonLeader = false
   selectedplayers = 0
   Titles = {{}, {}, {}, 0}
-  TQMOBag = '1b460b'
+  TQMOBag = '1b460b' -- Title cards, Quorum cards, Mutiny Cards, (Agenda?) cards
   TokenBag = '8769f3'
   LocationsBag = '2ddbff'
   LoyaltyCylonBag = '861938'
   LoyaltyHumanBag = 'd12fc6'
   LoyaltySpecialBag = 'e00db3'
   ExtraLoyaltyCards = 0
-  TPLTPEBag = '99659a'
+  TPLTPEBag = '99659a' -- These are the treachery, politics, leadership, tactics, piloting, engineering cards
   DestinationsBag = '028b53'
   CrisisCardsBag = '501808'
   SupercrisisCardsBag = '4c5dfc'
@@ -1952,6 +1953,7 @@ function Succession(object, setup)
     end
 end
 
+-- Admiral, President, CAG
 function BuildAPC()
     if PlayerCounter[1] != selectedplayers then return end
 
