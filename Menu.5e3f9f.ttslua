@@ -1,0 +1,290 @@
+function onload()
+    Reset()
+end
+
+function Menus()
+    self.createButton({label = 'Expansions', click_function = 'Null', rotation = {0, 0, 0},
+    position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '[ ] Pegasus', click_function = 'Pegasus', rotation = {0, 0, 0},
+    position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '[ ] Daybreak', click_function = 'Daybreak', rotation = {0, 0, 0},
+    position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '[ ] Exodus', click_function = 'Exodus', rotation = {0, 0, 0},
+    position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = 'Next', click_function = 'Next', rotation = {0, 0, 0},
+    position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
+    position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+end
+
+function Next()
+    self.clearButtons()
+    if selectedexpansion[2] == true then
+        self.createButton({label = 'Pegasus Options', click_function = 'Null', rotation = {0, 0, 0},
+        position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        if selectedDestination == '' then
+            self.createButton({label = '[ ] New Caprica Destination', click_function = 'NewCaprica', rotation = {0, 0, 0},
+            position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        end
+        if selectedexpansion[3] == false then
+            self.createButton({label = '[ ] Include Sympathetic Cylon', click_function = 'SympatheticCyclon', rotation = {0, 0, 0},
+            position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        end
+
+        if selectedexpansion[3] == false then
+            self.createButton({label = '[ ] Replace Agenda Cards', click_function = 'Replace', rotation = {0, 0, 0},
+            position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        end
+        self.createButton({label = 'Next', click_function = 'Next2', rotation = {0, 0, 0},
+        position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
+        position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+        return
+    end
+    if selectedexpansion[3] == true then
+        Next2()
+        return
+    end
+    if selectedexpansion[4] == true then
+        Next3()
+        return
+    end
+    if selectedexpansion[2] == false and selectedexpansion[3] == false and selectedexpansion[4] == false then
+        Next4()
+    end
+end
+
+function Next2()
+    self.clearButtons()
+    if selectedexpansion[3] == true then
+        if selectedDestination == '' then
+            self.createButton({label = 'Daybreak Options', click_function = 'Null', rotation = {0, 0, 0},
+            position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
+            self.createButton({label = '[ ] Earth Destination', click_function = 'Searchforhome', rotation = {0, 0, 0},
+            position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
+            self.createButton({label = 'Next', click_function = 'Next3', rotation = {0, 0, 0},
+            position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+            self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
+            position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+            return
+        else
+            Next3()
+            return
+        end
+    end
+    if selectedexpansion[4] == true then
+        Next3()
+        return
+    end
+    if selectedexpansion[3] == false and selectedexpansion[4] == false then
+        Next4()
+    end
+end
+
+function Next3()
+    self.clearButtons()
+    if selectedexpansion[4] == true then
+        self.createButton({label = 'Exodus Options', click_function = 'Null', rotation = {0, 0, 0},
+        position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        if selectedDestination == '' then
+            self.createButton({label = '[ ] Ionian Nebula Destination', click_function = 'IonianNebula', rotation = {0, 0, 0},
+            position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        end
+        self.createButton({label = '[ ] Cylon Fleet Board', click_function = 'CylonFleetBoard', rotation = {0, 0, 0},
+        position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = '[ ] Final Five Loyalty Cards', click_function = 'FinalFive', rotation = {0, 0, 0},
+        position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = '[ ] Peronsal Goal Cards', click_function = 'PeronsalGoals', rotation = {0, 0, 0},
+        position = {0, 1, 1}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = 'Next', click_function = 'Next4', rotation = {0, 0, 0},
+        position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
+        position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+        return
+    end
+    if selectedexpansion[4] == false then
+        Next4()
+        return
+    end
+end
+
+function Next4(object, playerColor)
+    self.clearButtons()
+    self.createButton({label = 'Number of Players', click_function = 'Null', rotation = {0, 0, 0},
+    position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '3', click_function = 'threeplayer', rotation = {0, 0, 0},
+    position = {-6, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '4', click_function = 'fourplayer', rotation = {0, 0, 0},
+    position = {-3, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '5', click_function = 'fiveplayer', rotation = {0, 0, 0},
+    position =  {0, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '6', click_function = 'sixplayer', rotation = {0, 0, 0},
+    position = {3, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    if selectedexpansion[2] == true or selectedexpansion[3] == true then
+        self.createButton({label = '7', click_function = 'sevenplayer', rotation = {0, 0, 0},
+        position =  {6, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    end
+    self.createButton({label = 'Settings', click_function = 'Null', rotation = {0, 0, 0},
+    position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '[ ] Promoted Only Buttons', click_function = 'HostLockDown', rotation = {0, 0, 0},
+    position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '[ ] Broad Cast Changes', click_function = 'MessageType', rotation = {0, 0, 0},
+    position = {0, 1, 1}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = 'Next', click_function = 'Next5', rotation = {0, 0, 0},
+    position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
+    position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+end
+
+function Next5(object, playerColor)
+    if selectedDestination == '' then
+        selectedDestination = 'Kobol'
+    end
+    Global.call('save',{selectedexpansion,selectedDestination,selectedpegasus,selecteddaybreak,selectedexodus,selectedplayers})
+    self.destruct()
+end
+
+function removeplayer(index)
+    --WOKRING
+    local index = index - 2
+    local max = 4
+    if selectedexpansion[2] == true or selectedexpansion[3] == true then
+        max = 5
+    end
+    for i=1,max,1 do
+        if index != i then
+            self.removeButton(i)
+        end
+    end
+end
+
+function threeplayer(object, playerColor)
+    selectedplayers = 3
+    removeplayer(selectedplayers)
+end
+function fourplayer(object, playerColor)
+    selectedplayers = 4
+    removeplayer(selectedplayers)
+end
+function fiveplayer(object, playerColor)
+    selectedplayers = 5
+    removeplayer(selectedplayers)
+end
+function sixplayer(object, playerColor)
+    selectedplayers = 6
+    removeplayer(selectedplayers)
+end
+function sevenplayer(object, playerColor)
+    selectedplayers = 7
+    removeplayer(selectedplayers)
+end
+
+function Null(object, playerColor)
+end
+
+
+function Reset()
+    self.clearButtons()
+    selectedexpansion = {true,false,false,false}
+    selectedDestination = ''
+    selectedpegasus = {false,false,false}
+    selecteddaybreak = {false}
+    selectedexodus = {false,false,false,false}
+    selectedplayers = 0
+    Menus()
+end
+
+function SympatheticCyclon(object, playerColor)
+    selectedpegasus[2] = FlipText(object,'SympatheticCyclon','Include Sympathetic Cylon')
+end
+
+function CylonFleetBoard(object, playerColor)
+    selectedexodus[2] = FlipText(object,'CylonFleetBoard','Cylon Fleet Board')
+end
+
+function FinalFive(object, playerColor)
+    selectedexodus[3] = FlipText(object,'FinalFive','Final Five Loyalty Cards')
+end
+
+function PeronsalGoals(object, playerColor)
+    selectedexodus[4] = FlipText(object,'PeronsalGoals','Personal Goal Cards')
+end
+
+function NewCaprica(object, playerColor)
+    selectedpegasus[1] = FlipText(object,'NewCaprica','New Caprica Destination')
+    if selectedpegasus[1] == false then
+        selectedDestination = ''
+    else
+        selectedDestination = 'NewCaprica'
+    end
+end
+
+function Searchforhome(object, playerColor)
+    selecteddaybreak[1] = FlipText(object,'Searchforhome','Earth Destination')
+    if selecteddaybreak[1] == false then
+        selectedDestination = ''
+    else
+        selectedDestination = 'Earth'
+    end
+end
+
+function IonianNebula(object, playerColor)
+    selectedexodus[1] = FlipText(object,'IonianNebula','Ionian Nebula Destination')
+    if selectedexodus[1] == false then
+        selectedDestination = ''
+    else
+        selectedDestination = 'IonianNebula'
+    end
+end
+
+function Replace(object, playerColor)
+    selectedpegasus[3] = FlipText(object,'Replace','Replace Agenda Cards')
+end
+
+function Pegasus(object, playerColor)
+    selectedexpansion[2] = FlipText(object,'Pegasus','Pegasus')
+end
+
+function Daybreak(object, playerColor)
+    selectedexpansion[3] = FlipText(object,'Daybreak','Daybreak')
+end
+
+function Exodus(object, playerColor)
+    selectedexpansion[4] = FlipText(object,'Exodus','Exodus')
+end
+
+
+function HostLockDown(object, playerColor)
+    LockType = FlipText(object,'HostLockDown','Promoted Only Buttons')
+end
+
+function MessageType(object, playerColor)
+    BroadCastMessage = FlipText(object,'MessageType','Broad Cast Changes')
+end
+
+function FindButton(object, c_function)
+    local index = 0
+    Buttons = object.getButtons()
+    for i, button in ipairs(Buttons) do
+        if button.click_function == c_function then
+            index = button.index
+        end
+    end
+    return Buttons, index
+end
+
+function FlipText(object, c_function, label)
+    local button_parameters = {}
+    local button, index = FindButton(object, c_function)
+    local _, found = string.find(button[index + 1].label, '[X]')
+    button_parameters.index = index
+    if found == nil then
+        button_parameters.label = '[X] ' .. label
+        object.editButton(button_parameters)
+        return true
+    else
+        button_parameters.label = '[ ] ' .. label
+        object.editButton(button_parameters)
+        return false
+    end
+end
