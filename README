@@ -1,3 +1,29 @@
 Shamelessly stolen from https://steamcommunity.com/sharedfiles/filedetails/?id=853230791
 
 All credit goes to Flolania. I just tweaked a few things and fixed a couple bugs.
+
+
+Notes (used to comprehend the source code):
+- APC bag = Admiral, President, CAG
+- TPLTPE bag = Treachery, Political, Leadership, Tactics, Piloting, Engineering bag
+
+currentplayer = integer representing the index of the players
+counter = integer. (Used for iterating through the players?)
+Count = global variable that should be local. Used to determine how many cards are put on the crisis board
+selectedplayers = ???
+
+It seems like all the data is being 'stored' in the character cards.
+
+Titles[1] = list of Tables
+   - object["Data"] = Table
+      - object["Data"]["PlayerPosition"] = index of the player
+      - object["Data"]["PlayerColor"] = color of the player
+      - object["Data"]["Hand"] = Hand Table?
+
+Titles[1] = ???
+Titles[4] = Cylon Leader
+
+Calling Succession function passes EndSetup, which is a boolean to indicate whether or not setup has completed.
+
+
+TODO: Try executing, see what happens.

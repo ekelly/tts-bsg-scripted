@@ -10,6 +10,8 @@ function CrisisBoardtest()
     end
 
 
+    -- Iterates through every person and only shows the Crisis board for the
+    -- player whose position == current player
     for y, test in ipairs(Titles[1]) do
         local data = test["Object"].getTable('Data')
         if data["PlayerPosition"] == currentplayer then
@@ -42,6 +44,9 @@ function Pass(object, playercolor)
         currentplayer = 1
     end
 
+    -- This gets ALL objects in the game, and uses the 'y' value
+    -- to decide if it's on the crisis board or not.
+    -- 'y' coordinate represents height.
      Count = 0
      for i, object in ipairs(getAllObjects()) do
          if object.name == 'Card' or object.name == 'Deck' then
@@ -1922,7 +1927,7 @@ end
 end
 
 
-
+-- object = Character card, setup = boolean true if setup was completed
 function Succession(object, setup)
     local data = object.getTable('Data')
     local t = {"Admiral", "President", "Cag"}
