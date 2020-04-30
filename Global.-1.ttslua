@@ -47,7 +47,7 @@ function Pass(object, playercolor)
     -- This gets ALL objects in the game, and uses the 'y' value
     -- to decide if it's on the crisis board or not.
     -- 'y' coordinate represents height.
-     Count = 0
+     local Count = 0
      for i, object in ipairs(getAllObjects()) do
          if object.name == 'Card' or object.name == 'Deck' then
              if object.getPosition()['y'] > 4 then
@@ -1612,7 +1612,7 @@ function setTintColor(object, params)
     object.scale(0.75)
 end
 
-function onload()
+function onLoad(saved_state)
     -- Data for All Cards
     -- Name, Type, Ranking-(admiral,presdient,cag)location-(x,y,z),
     -- Colors-(T,P,L,T,P,E) 5/dual stats, expansion (1=base, 2=Pegasus, 3=Daybreak, 4=Exodus), dualcharater (t/f and name)
@@ -1689,29 +1689,29 @@ function onload()
 
 
 
-  getObjectFromGUID(TQMOBag).interactable = false
-  getObjectFromGUID(LocationsBag).interactable = false
-  getObjectFromGUID(LoyaltyCylonBag).interactable = false
-  getObjectFromGUID(LoyaltyHumanBag).interactable = false
-  getObjectFromGUID(LoyaltySpecialBag).interactable = false
-  getObjectFromGUID(TPLTPEBag).interactable = false
-  getObjectFromGUID(DestinationsBag).interactable = false
-  getObjectFromGUID(CrisisCardsBag).interactable = false
-  getObjectFromGUID(SupercrisisCardsBag).interactable = false
-  getObjectFromGUID(ExtrasBag).interactable = false
-  getObjectFromGUID(TokenBag).interactable = false
-  getObjectFromGUID(CrisisBoard).interactable = false
+  setObjectNonInteractable(TQMOBag)
+  setObjectNonInteractable(LocationsBag)
+  setObjectNonInteractable(LoyaltyCylonBag)
+  setObjectNonInteractable(LoyaltyHumanBag)
+  setObjectNonInteractable(LoyaltySpecialBag)
+  setObjectNonInteractable(TPLTPEBag)
+  setObjectNonInteractable(DestinationsBag)
+  setObjectNonInteractable(CrisisCardsBag)
+  setObjectNonInteractable(SupercrisisCardsBag)
+  setObjectNonInteractable(ExtrasBag)
+  setObjectNonInteractable(TokenBag)
+  setObjectNonInteractable(CrisisBoard)
 
-  getObjectFromGUID(extrahumancards).interactable = false
-  getObjectFromGUID(characterboard).interactable = false
-  getObjectFromGUID(bigcardsboard).interactable = false
-  getObjectFromGUID(smallsideboard).interactable = false
-
-
+  setObjectNonInteractable(extrahumancards)
+  setObjectNonInteractable(characterboard)
+  setObjectNonInteractable(bigcardsboard)
+  setObjectNonInteractable(smallsideboard)
 
 
 
-    getObjectFromGUID(unusedcards).interactable = false
+
+
+    setObjectNonInteractable(unusedcards)
 --    getObjectFromGUID(Menu).interactable = false
 
 
@@ -2061,7 +2061,12 @@ function spawncharacters()
 end
 
 
-
+function setObjectNonInteractable(guid)
+    object = getObjectFromGUID(guid)
+    if object != nil
+        object.interactable = false
+    end
+end
 
 
 
