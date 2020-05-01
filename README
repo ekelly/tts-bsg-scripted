@@ -73,18 +73,16 @@ Data flow:
 23. BuildAPC creates a "spawn crisis board" button and puts it on the 'TestingObject' (token)
 24. ShuffleAll() shuffles all the decks then destroys all the bags used for setup
 
-
-Execute doesn't seem to allow you to reselect a character?
-
 ------------------------------
-Dynamic data:
+Dynamic data: - unsure if this needs to be tracked separately
+
 - Which person is assigned to which characters
 - Whether a character is executed or not
 - Who has which title
 - Which loyalty cards are in front of each player
 - The state of all the trackers
 
---
+------------------------------
 
-
+Execute doesn't seem to allow you to reselect a character?
 TODO: Try executing, see what happens.
