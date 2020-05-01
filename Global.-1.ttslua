@@ -1,7 +1,15 @@
 --Eh, Don't look at this code, pretty jankie to get it working
 
 function CrisisBoardtest()
-    local Pass = {['click_function'] = 'Pass', ['label'] = 'Done or Pass', ['position'] = {0, 0.6, 6}, ['rotation'] =  {0, 0, 0}, ['width'] = 2050, ['height'] = 650, ['font_size'] = 350}
+    local Pass = {
+        ["click_function"] = "Pass",
+        ["label"] = "Done or Pass",
+        ["position"] = {0, 0.6, 6},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 2050,
+        ["height"] = 650,
+        ["font_size"] = 350
+    }
     getObjectFromGUID(CrisisBoard).createButton(Pass)
 
     currentplayer = currentplayer + 1
@@ -9,28 +17,22 @@ function CrisisBoardtest()
         currentplayer = 1
     end
 
-
     -- Iterates through every person and only shows the Crisis board for the
     -- player whose position == current player
     for y, test in ipairs(Titles[1]) do
-        local data = test["Object"].getTable('Data')
+        local data = test["Object"].getTable("Data")
         if data["PlayerPosition"] == currentplayer then
-            local rotation = {data["Hand"]['rot_x'], data["Hand"]['rot_y'] + 180, data["Hand"]['rot_z']}
+            local rotation = {data["Hand"]["rot_x"], data["Hand"]["rot_y"] + 180, data["Hand"]["rot_z"]}
             local position = HandPositionObject(data, 10, 0, 10, 0)
-            getObjectFromGUID(CrisisBoard).setPosition({position[1],position[2] + 4.4,position[3]})
+            getObjectFromGUID(CrisisBoard).setPosition({position[1], position[2] + 4.4, position[3]})
             getObjectFromGUID(CrisisBoard).setRotation(rotation)
         end
     end
-
-
-
-
-
 end
 
 function Pass(object, playercolor)
     for y, test in ipairs(Titles[1]) do
-        local data = test["Object"].getTable('Data')
+        local data = test["Object"].getTable("Data")
         if data["PlayerPosition"] == currentplayer then
             if data["PlayerColor"] ~= playercolor then
                 return
@@ -47,39 +49,37 @@ function Pass(object, playercolor)
     -- This gets ALL objects in the game, and uses the 'y' value
     -- to decide if it's on the crisis board or not.
     -- 'y' coordinate represents height.
-     Count = 0
-     for i, object in ipairs(getAllObjects()) do
-         if object.name == 'Card' or object.name == 'Deck' then
-             if object.getPosition()['y'] > 4 then
-                 object.setRotation({0,180,180})
-                 object.setPositionSmooth({20,1,-3.3})
-                 if object.name == 'Deck' then
-                     Count = Count + #object.getObjects()
-                 else
-                     Count = Count + 1
-                 end
-             end
-         end
-     end
-     sendMessage(playercolor .. ' added ' .. Count .. ' card(s).',playercolor)
+    Count = 0
+    for i, object in ipairs(getAllObjects()) do
+        if object.name == "Card" or object.name == "Deck" then
+            if object.getPosition()["y"] > 4 then
+                object.setRotation({0, 180, 180})
+                object.setPositionSmooth({20, 1, -3.3})
+                if object.name == "Deck" then
+                    Count = Count + #object.getObjects()
+                else
+                    Count = Count + 1
+                end
+            end
+        end
+    end
+    sendMessage(playercolor .. " added " .. Count .. " card(s).", playercolor)
 
-     if counter == #Titles[1] then
-         counter = 0
-         getObjectFromGUID(CrisisBoard).setPosition({0,-4,0})
-     else
-         for y, test in ipairs(Titles[1]) do
-             local data = test["Object"].getTable('Data')
-             if data["PlayerPosition"] == currentplayer then
-                 local rotation = {data["Hand"]['rot_x'], data["Hand"]['rot_y'] + 180, data["Hand"]['rot_z']}
-                 local position = HandPositionObject(data, 10, 0, 10, 0)
-                 getObjectFromGUID(CrisisBoard).setPosition({position[1],position[2] + 4.4,position[3]})
-                 getObjectFromGUID(CrisisBoard).setRotation(rotation)
-             end
-         end
-     end
-
+    if counter == #Titles[1] then
+        counter = 0
+        getObjectFromGUID(CrisisBoard).setPosition({0, -4, 0})
+    else
+        for y, test in ipairs(Titles[1]) do
+            local data = test["Object"].getTable("Data")
+            if data["PlayerPosition"] == currentplayer then
+                local rotation = {data["Hand"]["rot_x"], data["Hand"]["rot_y"] + 180, data["Hand"]["rot_z"]}
+                local position = HandPositionObject(data, 10, 0, 10, 0)
+                getObjectFromGUID(CrisisBoard).setPosition({position[1], position[2] + 4.4, position[3]})
+                getObjectFromGUID(CrisisBoard).setRotation(rotation)
+            end
+        end
+    end
 end
-
 
 function save(data)
     selectedexpansion = data[1]
@@ -90,83 +90,155 @@ function save(data)
     selectedplayers = data[6]
     if selectedplayers == 0 then
         selectedplayers = #getSeatedPlayers()
-        sendMessage('Player override canceled, using seated players as count.','Black')
+        sendMessage("Player override canceled, using seated players as count.", "Black")
         if selectedplayers < 3 then
-            sendMessage('Error - This script requires at least 3 people seated or use override options.','Black')
+            sendMessage("Error - This script requires at least 3 people seated or use override options.", "Black")
         end
     end
     GenerateCharaterButtons()
 end
 
 function spawndrawcards(object)
-    local data = object.getTable('Data')
+    local data = object.getTable("Data")
     local Position = -2
     if data["DrawColors"][1] == 5 then
-        object.createButton({label = 'Treachery', click_function = 'drawTreachery', rotation = {0, 0, 0},
-                            position = {-4, 0.6, Position}, width = 1000, height = 300, font_size = 150})
+        object.createButton(
+            {
+                label = "Treachery",
+                click_function = "drawTreachery",
+                rotation = {0, 0, 0},
+                position = {-4, 0.6, Position},
+                width = 1000,
+                height = 300,
+                font_size = 150
+            }
+        )
         Position = Position + 1
     end
     if data["DrawColors"][2] == 5 then
-        object.createButton({label = 'Politics', click_function = 'drawPolitics', rotation = {0, 0, 0},
-                            position = {-4, 0.6, Position}, width = 1000, height = 300, font_size = 150})
+        object.createButton(
+            {
+                label = "Politics",
+                click_function = "drawPolitics",
+                rotation = {0, 0, 0},
+                position = {-4, 0.6, Position},
+                width = 1000,
+                height = 300,
+                font_size = 150
+            }
+        )
         Position = Position + 1
     end
     if data["DrawColors"][3] == 5 then
-        object.createButton({label = 'Leadership', click_function = 'drawLeadership', rotation = {0, 0, 0},
-                            position = {-4, 0.6, Position}, width = 1000, height = 300, font_size = 150})
+        object.createButton(
+            {
+                label = "Leadership",
+                click_function = "drawLeadership",
+                rotation = {0, 0, 0},
+                position = {-4, 0.6, Position},
+                width = 1000,
+                height = 300,
+                font_size = 150
+            }
+        )
         Position = Position + 1
     end
     if data["DrawColors"][4] == 5 then
-        object.createButton({label = 'Tactics', click_function = 'drawTactics', rotation = {0, 0, 0},
-                            position = {-4, 0.6, Position}, width = 1000, height = 300, font_size = 150})
+        object.createButton(
+            {
+                label = "Tactics",
+                click_function = "drawTactics",
+                rotation = {0, 0, 0},
+                position = {-4, 0.6, Position},
+                width = 1000,
+                height = 300,
+                font_size = 150
+            }
+        )
         Position = Position + 1
     end
     if data["DrawColors"][5] == 5 then
-        object.createButton({label = 'Piloting', click_function = 'drawPiloting', rotation = {0, 0, 0},
-                            position = {-4, 0.6, Position}, width = 1000, height = 300, font_size = 150})
+        object.createButton(
+            {
+                label = "Piloting",
+                click_function = "drawPiloting",
+                rotation = {0, 0, 0},
+                position = {-4, 0.6, Position},
+                width = 1000,
+                height = 300,
+                font_size = 150
+            }
+        )
         Position = Position + 1
     end
     if data["DrawColors"][6] == 5 then
-        object.createButton({label = 'Engineering', click_function = 'drawEngineering', rotation = {0, 0, 0},
-                            position = {-4, 0.6, Position}, width = 1000, height = 300, font_size = 150})
+        object.createButton(
+            {
+                label = "Engineering",
+                click_function = "drawEngineering",
+                rotation = {0, 0, 0},
+                position = {-4, 0.6, Position},
+                width = 1000,
+                height = 300,
+                font_size = 150
+            }
+        )
         Position = Position + 1
     end
-    if object.getDescription() ~= 'Cylon Leader' then
-        object.createButton({label = 'Draw Set', click_function = 'drawSet', rotation = {0, 0, 0},
-                            position = {-4, 0.6, Position}, width = 1000, height = 300, font_size = 150})
+    if object.getDescription() ~= "Cylon Leader" then
+        object.createButton(
+            {
+                label = "Draw Set",
+                click_function = "drawSet",
+                rotation = {0, 0, 0},
+                position = {-4, 0.6, Position},
+                width = 1000,
+                height = 300,
+                font_size = 150
+            }
+        )
     end
 
-    object.createButton({label = 'Execute', click_function = 'Execute', rotation = {0, 0, 0},
-                        position = {3.6, 0.6, -2.8}, width = 1000, height = 300, font_size = 150})
+    object.createButton(
+        {
+            label = "Execute",
+            click_function = "Execute",
+            rotation = {0, 0, 0},
+            position = {3.6, 0.6, -2.8},
+            width = 1000,
+            height = 300,
+            font_size = 150
+        }
+    )
 
     -- Fix for two charaters set being the same as their draw cards
-    if object.getName() == 'Samuel T. Anders' or object.getName() == 'Helena Cain' then
-        data["DrawColors"] = {0,0,2,2,0,0}
-        object.setTable('Data', data)
+    if object.getName() == "Samuel T. Anders" or object.getName() == "Helena Cain" then
+        data["DrawColors"] = {0, 0, 2, 2, 0, 0}
+        object.setTable("Data", data)
     end
 end
 
 function drawTreachery(object, playerColor)
-    draw1card(object, playerColor, 'TreacheryTrigger')
+    draw1card(object, playerColor, "TreacheryTrigger")
 end
 function drawPolitics(object, playerColor)
-    draw1card(object, playerColor, 'PoliticsTrigger')
+    draw1card(object, playerColor, "PoliticsTrigger")
 end
 function drawLeadership(object, playerColor)
-    draw1card(object, playerColor, 'LeadershipTrigger')
+    draw1card(object, playerColor, "LeadershipTrigger")
 end
 function drawTactics(object, playerColor)
-    draw1card(object, playerColor, 'TacticsTrigger')
+    draw1card(object, playerColor, "TacticsTrigger")
 end
 function drawPiloting(object, playerColor)
-    draw1card(object, playerColor, 'PilotingTrigger')
+    draw1card(object, playerColor, "PilotingTrigger")
 end
 function drawEngineering(object, playerColor)
-    draw1card(object, playerColor, 'EngineeringTrigger')
+    draw1card(object, playerColor, "EngineeringTrigger")
 end
 
 function draw1card(object, playerColor, trigger)
-    local data = object.getTable('Data')
+    local data = object.getTable("Data")
     if data["PlayerColor"] == playerColor then
         local Deck = ReturnDeck(trigger)
         if Deck ~= nil then
@@ -180,21 +252,35 @@ function ReturnDeck(trigger)
     local ZoneObjects = FindObject(trigger).getObjects()
     local Deck = nil
     for i, obj in ipairs(ZoneObjects) do
-        if obj.name == 'Deck' then
+        if obj.name == "Deck" then
             Deck = obj
         end
     end
-    if trigger == 'LayoutTrigger' then
+    if trigger == "LayoutTrigger" then
         return Deck, #ZoneObjects
     end
     if #ZoneObjects > 2 then
-        sendMessage('Error - ' .. trigger .. ' might not be a single deck.', 'Black')
+        sendMessage("Error - " .. trigger .. " might not be a single deck.", "Black")
     end
     if Deck == nil then
         -------DON"T LIKE THIS REDO IT PLEASE
-        local triggers = {'TreacheryTrigger','PoliticsTrigger','LeadershipTrigger','TacticsTrigger','PilotingTrigger','EngineeringTrigger'}
-        local discardstriggers = {'TreacheryDiscard','PoliticsDiscard','LeadershipDiscard','TacticsDiscard','PilotingDiscard','EngineeringDiscard'}
-        for y=1,6,1 do
+        local triggers = {
+            "TreacheryTrigger",
+            "PoliticsTrigger",
+            "LeadershipTrigger",
+            "TacticsTrigger",
+            "PilotingTrigger",
+            "EngineeringTrigger"
+        }
+        local discardstriggers = {
+            "TreacheryDiscard",
+            "PoliticsDiscard",
+            "LeadershipDiscard",
+            "TacticsDiscard",
+            "PilotingDiscard",
+            "EngineeringDiscard"
+        }
+        for y = 1, 6, 1 do
             if trigger == triggers[y] then
                 Deck = RebuildDeck(discardstriggers[y])
             end
@@ -205,10 +291,17 @@ end
 
 function drawSet(object, playerColor)
     -- Draws a set of cards for the character.
-    local data = object.getTable('Data')
+    local data = object.getTable("Data")
     if data["PlayerColor"] == playerColor then
-        local triggers = {'TreacheryTrigger','PoliticsTrigger','LeadershipTrigger','TacticsTrigger','PilotingTrigger','EngineeringTrigger'}
-        for y=1,6,1 do
+        local triggers = {
+            "TreacheryTrigger",
+            "PoliticsTrigger",
+            "LeadershipTrigger",
+            "TacticsTrigger",
+            "PilotingTrigger",
+            "EngineeringTrigger"
+        }
+        for y = 1, 6, 1 do
             local Deck = ReturnDeck(triggers[y])
             if Deck ~= nil and data["DrawColors"][y] ~= 5 then
                 Deck.dealToColor(data["DrawColors"][y], playerColor)
@@ -216,7 +309,6 @@ function drawSet(object, playerColor)
         end
     end
 end
-
 
 function RebuildDeck(Trigger)
     local Deck = ReturnDeck(Trigger)
@@ -229,60 +321,90 @@ function RebuildDeck(Trigger)
         return Deck
     else
         ---DON"T LIKE THIS REDO
-        if Trigger == 'TreacheryDiscard' then
+        if Trigger == "TreacheryDiscard" then
             if selectedexpansion[2] == true or selectedexpansion[3] == true then
-                sendMessage('Error - not enough discards cards for ' .. Trigger,'Black')
+                sendMessage("Error - not enough discards cards for " .. Trigger, "Black")
             end
         else
-            sendMessage('Error - not enough discards cards for ' .. Trigger,'Black')
+            sendMessage("Error - not enough discards cards for " .. Trigger, "Black")
         end
     end
 end
 
 function Take2Destiny(object, playerColor)
-    local Deck = ReturnDeck('DestinyTrigger')
+    local Deck = ReturnDeck("DestinyTrigger")
     if Deck ~= nil then
-        Deck.takeObject({position = {20,2,-3.3},rotation = {0,180,180},index = 1})
-        Deck.takeObject({position = {20,2,-3.3},rotation = {0,180,180},index = 1})
-        local button, index = FindButton(object, 'Take2Destiny')
+        Deck.takeObject({position = {20, 2, -3.3}, rotation = {0, 180, 180}, index = 1})
+        Deck.takeObject({position = {20, 2, -3.3}, rotation = {0, 180, 180}, index = 1})
+        local button, index = FindButton(object, "Take2Destiny")
         object.removeButton(index)
     else
-        sendMessage('Destiny Deck Empty - Rebuild', 'Black')
+        sendMessage("Destiny Deck Empty - Rebuild", "Black")
     end
 end
-
 
 function CylonTracker(object)
     CylonLocation = 0
-    object.createButton({label = 'X', click_function = 'CylonJump', rotation = {0, 0, 0},
-    position = {-2.2, 0.6, -7}, width = 500, height = 500, font_size = 350})
-    object.createButton({label = '>', click_function = 'CylonIncreaseJump', rotation = {0, 0, 0},
-    position = {2.7, 0.6, -7}, width = 250, height = 250, font_size = 250})
-    object.createButton({label = '<', click_function = 'CylonDecreaseJump', rotation = {0, 0, 0},
-    position = {-3.1, 0.6, -7}, width = 250, height = 250, font_size = 250})
+    object.createButton(
+        {
+            label = "X",
+            click_function = "CylonJump",
+            rotation = {0, 0, 0},
+            position = {-2.2, 0.6, -7},
+            width = 500,
+            height = 500,
+            font_size = 350
+        }
+    )
+    object.createButton(
+        {
+            label = ">",
+            click_function = "CylonIncreaseJump",
+            rotation = {0, 0, 0},
+            position = {2.7, 0.6, -7},
+            width = 250,
+            height = 250,
+            font_size = 250
+        }
+    )
+    object.createButton(
+        {
+            label = "<",
+            click_function = "CylonDecreaseJump",
+            rotation = {0, 0, 0},
+            position = {-3.1, 0.6, -7},
+            width = 250,
+            height = 250,
+            font_size = 250
+        }
+    )
 end
 
 function CylonIncreaseJump(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     CylonLocation = CylonLocation + 1.15
     if CylonLocation > 4.5 then
         CylonLocation = 0
-        sendMessage(playerColor .. ' is having cylons jump in.',playerColor)
+        sendMessage(playerColor .. " is having cylons jump in.", playerColor)
     else
-        sendMessage(playerColor .. ' increased the Pursuit Tracker',playerColor)
+        sendMessage(playerColor .. " increased the Pursuit Tracker", playerColor)
     end
-    local button, index = FindButton(object, 'CylonJump')
+    local button, index = FindButton(object, "CylonJump")
     object.editButton({index = index, position = {-2.2 + CylonLocation, 0.6, -7}})
 end
 function CylonDecreaseJump(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     CylonLocation = CylonLocation - 1.15
     if CylonLocation < 0 then
         CylonLocation = 0
     else
-        sendMessage(playerColor .. ' decreased the Pursuit Tracker',playerColor)
+        sendMessage(playerColor .. " decreased the Pursuit Tracker", playerColor)
     end
-    local button, index = FindButton(object, 'CylonJump')
+    local button, index = FindButton(object, "CylonJump")
     object.editButton({index = index, position = {-2.2 + CylonLocation, 0.6, -7}})
 end
 
@@ -291,177 +413,189 @@ end
 function CylonJump()
 end
 
-
-
 function JumpTracker(object)
     JumpLocation = 0
-    object.createButton({label = 'X', click_function = 'Jump', rotation = {0, 0, 0},
-    position = {5.35, 0.6, -4.8}, width = 250, height = 250, font_size = 150})
-    object.createButton({label = '>', click_function = 'IncreaseJump', rotation = {0, 0, 0},
-    position = {8.1, 0.6, -4.8}, width = 150, height = 150, font_size = 150})
-    object.createButton({label = '<', click_function = 'DecreaseJump', rotation = {0, 0, 0},
-    position = {4.9, 0.6, -4.8}, width = 150, height = 150, font_size = 150})
+    object.createButton(
+        {
+            label = "X",
+            click_function = "Jump",
+            rotation = {0, 0, 0},
+            position = {5.35, 0.6, -4.8},
+            width = 250,
+            height = 250,
+            font_size = 150
+        }
+    )
+    object.createButton(
+        {
+            label = ">",
+            click_function = "IncreaseJump",
+            rotation = {0, 0, 0},
+            position = {8.1, 0.6, -4.8},
+            width = 150,
+            height = 150,
+            font_size = 150
+        }
+    )
+    object.createButton(
+        {
+            label = "<",
+            click_function = "DecreaseJump",
+            rotation = {0, 0, 0},
+            position = {4.9, 0.6, -4.8},
+            width = 150,
+            height = 150,
+            font_size = 150
+        }
+    )
 end
 
 function IncreaseJump(object, playerColor)
-    if HostLock(playerColor) == false then return end
-        JumpLocation = JumpLocation + 0.57
-        if JumpLocation > 2.5 then
-            JumpLocation = 0
-            sendMessage(playerColor .. ' is jumping the fleet.',playerColor)
-        else
-            sendMessage(playerColor .. ' increased the Jump Tracker',playerColor)
-        end
-        local button, index = FindButton(object, 'Jump')
-        object.editButton({index = index, position = {5.35 + JumpLocation, 0.6, -4.8}})
+    if HostLock(playerColor) == false then
+        return
+    end
+    JumpLocation = JumpLocation + 0.57
+    if JumpLocation > 2.5 then
+        JumpLocation = 0
+        sendMessage(playerColor .. " is jumping the fleet.", playerColor)
+    else
+        sendMessage(playerColor .. " increased the Jump Tracker", playerColor)
+    end
+    local button, index = FindButton(object, "Jump")
+    object.editButton({index = index, position = {5.35 + JumpLocation, 0.6, -4.8}})
 end
 
 function DecreaseJump(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     JumpLocation = JumpLocation - 0.57
     if JumpLocation < 0 then
         JumpLocation = 0
     else
-        sendMessage(playerColor .. ' decreased the Jump Tracker',playerColor)
+        sendMessage(playerColor .. " decreased the Jump Tracker", playerColor)
     end
-    local button, index = FindButton(object, 'Jump')
+    local button, index = FindButton(object, "Jump")
     object.editButton({index = index, position = {5.35 + JumpLocation, 0.6, -4.8}})
 end
 
-
-
-
-
-
 function spawnships()
---     obj_parameters = {}
---     obj_parameters.type = 'Custom_Model'
---     obj_parameters.rotation =
---     obj_parameters.position = {0,0,0}
--- --    obj_parameters.mesh = "https://www.dropbox.com/s/gne2jjqtltkq5u2/cylon-raider%20Mine.obj?dl=1"
--- --    obj_parameters.image = "http://i.imgur.com/SeWcFjV.jpg"
---     --obj_parameters.scale = {1.2,1.2,1.2}
---     obj = spawnObject(obj_parameters)
---
+    --     obj_parameters = {}
+    --     obj_parameters.type = 'Custom_Model'
+    --     obj_parameters.rotation =
+    --     obj_parameters.position = {0,0,0}
+    -- --    obj_parameters.mesh = "https://www.dropbox.com/s/gne2jjqtltkq5u2/cylon-raider%20Mine.obj?dl=1"
+    -- --    obj_parameters.image = "http://i.imgur.com/SeWcFjV.jpg"
+    --     --obj_parameters.scale = {1.2,1.2,1.2}
+    --     obj = spawnObject(obj_parameters)
+    --
 
-
-
-
-
-
-
-local obj_parameters = {}
-obj_parameters.type = 'Custom_Model'
-obj_parameters.position = {-14.7,2,-8.3}
-obj_parameters.rotation = {0,90,0}
-obj_parameters.scale = {0.5,0.5,0.5}
-
-local custom = {}
-custom.mesh = 'https://www.dropbox.com/s/gne2jjqtltkq5u2/cylon-raider%20Mine.obj?dl=1'
-custom.diffuse = 'http://i.imgur.com/SeWcFjV.jpg'
-
-for i=3,1,-1 do
-    obj_parameters.position = {-14.7,2,-8.3 + (1 * i)}
-    local radier = spawnObject(obj_parameters)
-    radier.setName('Raider -- On Roll 3-8 Destroyed')
-    radier.setCustomObject(custom)
-end
-
-
-
-    takeobj("Basestar 2","Null",{-14.2,2,-1},{0,90,0},ExtrasBag)
-
-if selectedexodus[2] == false then
-    takeobj("Raiders","Null",{-20.5,1,-14.75},{0,0,0},ExtrasBag, 'Lock')
-    takeobj("Heavy Raiders","Null",{-20.5,1,-11.5},{0,0,0},ExtrasBag, 'Lock')
-    takeobj("Basestar 1","Null",{-20.5,1,-8},{0,0,0},ExtrasBag)
-
-    totalvipers = 8
-else
     local obj_parameters = {}
-    obj_parameters.type = 'Custom_Model'
-    obj_parameters.position = {-23.7,1,-18.6}
-    obj_parameters.rotation = {0,90,0}
-    obj_parameters.scale = {0.5,0.5,0.5}
-    takeobj("Raiders","Null",obj_parameters.position,obj_parameters.rotation,ExtrasBag,'Lock')
+    obj_parameters.type = "Custom_Model"
+    obj_parameters.position = {-14.7, 2, -8.3}
+    obj_parameters.rotation = {0, 90, 0}
+    obj_parameters.scale = {0.5, 0.5, 0.5}
 
     local custom = {}
-    custom.mesh = 'https://www.dropbox.com/s/gne2jjqtltkq5u2/cylon-raider%20Mine.obj?dl=1'
-    custom.diffuse = 'http://i.imgur.com/SeWcFjV.jpg'
+    custom.mesh = "https://www.dropbox.com/s/gne2jjqtltkq5u2/cylon-raider%20Mine.obj?dl=1"
+    custom.diffuse = "http://i.imgur.com/SeWcFjV.jpg"
 
-    for i=4,1,-1 do
-        obj_parameters.position = {-23.7,1 + (0.5 * i),-18.6}
+    for i = 3, 1, -1 do
+        obj_parameters.position = {-14.7, 2, -8.3 + (1 * i)}
         local radier = spawnObject(obj_parameters)
-        radier.setName('Raider -- On Roll 3-8 Destroyed')
+        radier.setName("Raider -- On Roll 3-8 Destroyed")
         radier.setCustomObject(custom)
     end
-    takeobj("Heavy Raiders","Null",{-28.8,1,-18.5},{0,90,0},ExtrasBag,'Lock')
-    takeobj("Basestar 1","Null",{-33,1,-18.5},{0,90,0},ExtrasBag)
 
+    takeobj("Basestar 2", "Null", {-14.2, 2, -1}, {0, 90, 0}, ExtrasBag)
 
+    if selectedexodus[2] == false then
+        takeobj("Raiders", "Null", {-20.5, 1, -14.75}, {0, 0, 0}, ExtrasBag, "Lock")
+        takeobj("Heavy Raiders", "Null", {-20.5, 1, -11.5}, {0, 0, 0}, ExtrasBag, "Lock")
+        takeobj("Basestar 1", "Null", {-20.5, 1, -8}, {0, 0, 0}, ExtrasBag)
 
-    local obj_parameters = {}
-    obj_parameters.type = 'Custom_Model'
-    obj_parameters.position = {-12.1,2,13}
-    obj_parameters.rotation = {0,180,0}
-    obj_parameters.scale = {0.5,0.5,0.5}
+        totalvipers = 8
+    else
+        local obj_parameters = {}
+        obj_parameters.type = "Custom_Model"
+        obj_parameters.position = {-23.7, 1, -18.6}
+        obj_parameters.rotation = {0, 90, 0}
+        obj_parameters.scale = {0.5, 0.5, 0.5}
+        takeobj("Raiders", "Null", obj_parameters.position, obj_parameters.rotation, ExtrasBag, "Lock")
 
-    local custom = {}
-    custom.mesh = 'https://www.dropbox.com/s/qfm98lo6nfyk6g9/Viper%20Mk%207%20Mine.obj?dl=1'
-    custom.diffuse = 'http://i.imgur.com/a73ajzE.png'
+        local custom = {}
+        custom.mesh = "https://www.dropbox.com/s/gne2jjqtltkq5u2/cylon-raider%20Mine.obj?dl=1"
+        custom.diffuse = "http://i.imgur.com/SeWcFjV.jpg"
 
-    x = 0
-    y = 0
-    for i=4,1,-1 do
-        obj_parameters.position = {-12.1 + (1 * x),2,13 + y}
-        local hviper = spawnObject(obj_parameters)
-        hviper.setCustomObject(custom)
-        hviper.setName('Viper VII -- On Roll 6-7 Damaged, 8 Destroyed')
-        x = x + 1
-        if x == 2 then
-            x = 0
-            y = 1
+        for i = 4, 1, -1 do
+            obj_parameters.position = {-23.7, 1 + (0.5 * i), -18.6}
+            local radier = spawnObject(obj_parameters)
+            radier.setName("Raider -- On Roll 3-8 Destroyed")
+            radier.setCustomObject(custom)
         end
-    end
-    totalvipers = 6
-end
+        takeobj("Heavy Raiders", "Null", {-28.8, 1, -18.5}, {0, 90, 0}, ExtrasBag, "Lock")
+        takeobj("Basestar 1", "Null", {-33, 1, -18.5}, {0, 90, 0}, ExtrasBag)
 
+        local obj_parameters = {}
+        obj_parameters.type = "Custom_Model"
+        obj_parameters.position = {-12.1, 2, 13}
+        obj_parameters.rotation = {0, 180, 0}
+        obj_parameters.scale = {0.5, 0.5, 0.5}
+
+        local custom = {}
+        custom.mesh = "https://www.dropbox.com/s/qfm98lo6nfyk6g9/Viper%20Mk%207%20Mine.obj?dl=1"
+        custom.diffuse = "http://i.imgur.com/a73ajzE.png"
+
+        x = 0
+        y = 0
+        for i = 4, 1, -1 do
+            obj_parameters.position = {-12.1 + (1 * x), 2, 13 + y}
+            local hviper = spawnObject(obj_parameters)
+            hviper.setCustomObject(custom)
+            hviper.setName("Viper VII -- On Roll 6-7 Damaged, 8 Destroyed")
+            x = x + 1
+            if x == 2 then
+                x = 0
+                y = 1
+            end
+        end
+        totalvipers = 6
+    end
 
     local obj_parameters = {}
-    obj_parameters.type = 'Custom_Model'
-    obj_parameters.position = {-8.7,2,13}
-    obj_parameters.rotation = {0,180,0}
-    obj_parameters.scale = {0.5,0.5,0.5}
+    obj_parameters.type = "Custom_Model"
+    obj_parameters.position = {-8.7, 2, 13}
+    obj_parameters.rotation = {0, 180, 0}
+    obj_parameters.scale = {0.5, 0.5, 0.5}
 
     local custom = {}
-    custom.mesh = 'https://www.dropbox.com/s/yzgjug5ntdcosqs/Viper%20Mk%202%20Mine.obj?dl=1'
-    custom.diffuse = 'http://i.imgur.com/6P89gG1.png'
+    custom.mesh = "https://www.dropbox.com/s/yzgjug5ntdcosqs/Viper%20Mk%202%20Mine.obj?dl=1"
+    custom.diffuse = "http://i.imgur.com/6P89gG1.png"
 
     x = 0
     y = 0
-    for i=totalvipers,1,-1 do
-        obj_parameters.position = {-8.7 + (1 * x),2,13 + y}
+    for i = totalvipers, 1, -1 do
+        obj_parameters.position = {-8.7 + (1 * x), 2, 13 + y}
         if totalvipers == 6 then
             if i == 3 then
-                obj_parameters.position = {-5,2,-13}
+                obj_parameters.position = {-5, 2, -13}
             end
             if i == 6 then
-                obj_parameters.position = {5,2,-13}
+                obj_parameters.position = {5, 2, -13}
             end
         end
         if totalvipers == 8 then
             if i == 4 then
-                obj_parameters.position = {-5,2,-13}
+                obj_parameters.position = {-5, 2, -13}
             end
             if i == 8 then
-                obj_parameters.position = {5,2,-13}
+                obj_parameters.position = {5, 2, -13}
             end
         end
 
-
         local viper = spawnObject(obj_parameters)
         viper.setCustomObject(custom)
-        viper.setName('Viper -- On Roll 5-7 Damaged, 8 Destroyed')
+        viper.setName("Viper -- On Roll 5-7 Damaged, 8 Destroyed")
         x = x + 1
         if x == (totalvipers / 2) then
             x = 0
@@ -470,22 +604,22 @@ end
     end
 
     local obj_parameters = {}
-    obj_parameters.type = 'Custom_Model'
-    obj_parameters.position = {-4.5,2,13}
-    obj_parameters.rotation = {0,180,0}
-    obj_parameters.scale = {0.40,0.40,0.40}
+    obj_parameters.type = "Custom_Model"
+    obj_parameters.position = {-4.5, 2, 13}
+    obj_parameters.rotation = {0, 180, 0}
+    obj_parameters.scale = {0.40, 0.40, 0.40}
 
     local custom = {}
-    custom.mesh = 'https://www.dropbox.com/s/mi1ghuy9eynczyn/Raptor%20Mine2.obj?dl=1'
-    custom.diffuse = 'http://i.imgur.com/n4RDnG2.jpg'
+    custom.mesh = "https://www.dropbox.com/s/mi1ghuy9eynczyn/Raptor%20Mine2.obj?dl=1"
+    custom.diffuse = "http://i.imgur.com/n4RDnG2.jpg"
 
     x = 0
     y = 0
-    for i=4,1,-1 do
-        obj_parameters.position = {-4.5 + (0.75 * x),2,13 + y}
+    for i = 4, 1, -1 do
+        obj_parameters.position = {-4.5 + (0.75 * x), 2, 13 + y}
         local raptor = spawnObject(obj_parameters)
         raptor.setCustomObject(custom)
-        raptor.setName('Raptor')
+        raptor.setName("Raptor")
         x = x + 1
         if x == 2 then
             x = 0
@@ -494,76 +628,57 @@ end
     end
     if selectedexpansion[3] == true then
         local obj_parameters = {}
-        obj_parameters.type = 'Custom_Model'
-        obj_parameters.position = {-2.4,2,13}
-        obj_parameters.rotation = {0,180,0}
-        obj_parameters.scale = {0.75,0.75,0.75}
+        obj_parameters.type = "Custom_Model"
+        obj_parameters.position = {-2.4, 2, 13}
+        obj_parameters.rotation = {0, 180, 0}
+        obj_parameters.scale = {0.75, 0.75, 0.75}
 
         local custom = {}
-        custom.mesh = 'https://www.dropbox.com/s/mi1ghuy9eynczyn/Raptor%20Mine2.obj?dl=1'
-        custom.diffuse = 'http://i.imgur.com/n4RDnG2.jpg'
+        custom.mesh = "https://www.dropbox.com/s/mi1ghuy9eynczyn/Raptor%20Mine2.obj?dl=1"
+        custom.diffuse = "http://i.imgur.com/n4RDnG2.jpg"
 
         x = 0
         y = 0
-        for i=4,1,-1 do
+        for i = 4, 1, -1 do
             local Araptor = spawnObject(obj_parameters)
             Araptor.setCustomObject(custom)
-            Araptor.setName('Assult Raptor -- On Roll 7-8 Destroyed')
-            obj_parameters.position = {-5.2 + (1 * x),2,18}
+            Araptor.setName("Assult Raptor -- On Roll 7-8 Destroyed")
+            obj_parameters.position = {-5.2 + (1 * x), 2, 18}
             x = x + 1
         end
     end
 
-
-
     local obj_parameters = {}
-    obj_parameters.type = 'Custom_Model'
-    obj_parameters.position = {17.7,2,17}
-    obj_parameters.rotation = {0,180,0}
-    obj_parameters.scale = {0.75,0.75,0.75}
+    obj_parameters.type = "Custom_Model"
+    obj_parameters.position = {17.7, 2, 17}
+    obj_parameters.rotation = {0, 180, 0}
+    obj_parameters.scale = {0.75, 0.75, 0.75}
 
     local custom = {}
-    custom.mesh = 'https://sites.google.com/site/dbzsagastts/centurian3.obj?attredirects=0&d=1'
-    custom.diffuse = 'http://i.imgur.com/Qv3kBuD.jpg'
+    custom.mesh = "https://sites.google.com/site/dbzsagastts/centurian3.obj?attredirects=0&d=1"
+    custom.diffuse = "http://i.imgur.com/Qv3kBuD.jpg"
     custom.material = 3
 
-    for i=4,1,-1 do
-        obj_parameters.position = {17.7,2,17 + (i * 1.2)}
+    for i = 4, 1, -1 do
+        obj_parameters.position = {17.7, 2, 17 + (i * 1.2)}
         local Centurion = spawnObject(obj_parameters)
         Centurion.setCustomObject(custom)
-        Centurion.setName('Centurion')
+        Centurion.setName("Centurion")
     end
-
-
-
-
-
-
-
-
 end
 
-
-
-
-
-
-
-
-
-
 function ShuffleAll()
-    for i, obj in ipairs(getObjectFromGUID('049ae3').getObjects()) do
-        if obj.name == 'Deck' then
+    for i, obj in ipairs(getObjectFromGUID("049ae3").getObjects()) do
+        if obj.name == "Deck" then
             obj.shuffle()
         end
     end
---    getObjectFromGUID(TokenBag).setPosition({-2.5,1,22.5})
---    getObjectFromGUID(TokenBag).interactable = true
---    getObjectFromGUID('4ee9fa').setPosition({1.5,1,22.5})
---    getObjectFromGUID('4ee9fa').interactable = true
-    getObjectFromGUID('730cca').setPosition({0,1,25.5})
-    getObjectFromGUID('730cca').interactable = true
+    --    getObjectFromGUID(TokenBag).setPosition({-2.5,1,22.5})
+    --    getObjectFromGUID(TokenBag).interactable = true
+    --    getObjectFromGUID('4ee9fa').setPosition({1.5,1,22.5})
+    --    getObjectFromGUID('4ee9fa').interactable = true
+    getObjectFromGUID("730cca").setPosition({0, 1, 25.5})
+    getObjectFromGUID("730cca").interactable = true
     getObjectFromGUID(TQMOBag).destruct()
     getObjectFromGUID(LocationsBag).destruct()
     getObjectFromGUID(LoyaltyCylonBag).destruct()
@@ -574,38 +689,26 @@ function ShuffleAll()
     getObjectFromGUID(CrisisCardsBag).destruct()
     getObjectFromGUID(SupercrisisCardsBag).destruct()
     getObjectFromGUID(ExtrasBag).destruct()
-
-
-
-
-
-
-
-
-
-
-
 end
-
 
 function Timer1(params)
     if timer1 == true then
-        local button, index = FindButton(params.object, 'Layout')
-        params.object.editButton({index = index, label = 'Layout', click_function = 'Layout'})
+        local button, index = FindButton(params.object, "Layout")
+        params.object.editButton({index = index, label = "Layout", click_function = "Layout"})
         timer1 = nil
     end
 end
 
 function Timer2(params)
     if timer2 == true then
-        local button, index = FindButton(params.object, 'shufflecrisis')
-        params.object.editButton({index = index, label = 'Shuffle', click_function = 'shufflecrisis'})
+        local button, index = FindButton(params.object, "shufflecrisis")
+        params.object.editButton({index = index, label = "Shuffle", click_function = "shufflecrisis"})
         timer2 = nil
     end
 end
 
 function grid(number)
---get number return row/column
+    --get number return row/column
     if number < 11 then
         return 1, number
     end
@@ -624,38 +727,40 @@ function grid(number)
 end
 
 function Layout(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     if timer1 == true then
         timer1 = false
-        local button, index = FindButton(object, 'Layout')
-        object.editButton({index = index, label = 'Shuffle', click_function = 'shufflecrisis'})
+        local button, index = FindButton(object, "Layout")
+        object.editButton({index = index, label = "Shuffle", click_function = "shufflecrisis"})
     end
     if timer1 == nil then
-        local button, index = FindButton(object, 'Layout')
-        object.editButton({index = index, label = 'OK?', click_function = 'Layout'})
+        local button, index = FindButton(object, "Layout")
+        object.editButton({index = index, label = "OK?", click_function = "Layout"})
         params = {}
         params.object = object
         params.color = playerColor
-        Timer.create({identifier = 't1', function_name = 'Timer1', parameters = params, delay = 2})
+        Timer.create({identifier = "t1", function_name = "Timer1", parameters = params, delay = 2})
         timer1 = true
         return
     end
     timer2 = nil
 
-    local Deck, count = ReturnDeck('LayoutTrigger')
+    local Deck, count = ReturnDeck("LayoutTrigger")
     if Deck ~= nil then
         if count > 3 then
-            sendMessage('Error - Skill Check must be one deck, select and group them first.','Black')
-            local button, index = FindButton(object, 'shufflecrisis')
-            object.editButton({index = index, label = 'Layout', click_function = 'Layout'})
+            sendMessage("Error - Skill Check must be one deck, select and group them first.", "Black")
+            local button, index = FindButton(object, "shufflecrisis")
+            object.editButton({index = index, label = "Layout", click_function = "Layout"})
             timer1 = nil
             return
         end
         Deck.shuffle()
         local NewDeck = {}
-        local Cards = {'TR','P','L','T','PI','E'}
+        local Cards = {"TR", "P", "L", "T", "PI", "E"}
         local Counter = 1
-        for i=1,6,1 do
+        for i = 1, 6, 1 do
             for y, obj in ipairs(Deck.getObjects()) do
                 if obj.description == Cards[i] then
                     NewDeck[Counter] = obj.guid
@@ -664,69 +769,89 @@ function Layout(object, playerColor)
             end
         end
         if #NewDeck > 40 then
-            sendMessage('Error - AutoLayout exceeds recommened amount. This might cause issues.', 'Black')
+            sendMessage("Error - AutoLayout exceeds recommened amount. This might cause issues.", "Black")
         end
-        for i=1,#NewDeck,1 do
+        for i = 1, #NewDeck, 1 do
             a, b = grid(i)
             if i ~= #NewDeck then
-                Deck.takeObject({position = {21 + (b * 2.2),1.4 + (i * 0.1),8.3 - (a * 3.1)}, rotation = {0,180,0}, guid = NewDeck[i]})
+                Deck.takeObject(
+                    {
+                        position = {21 + (b * 2.2), 1.4 + (i * 0.1), 8.3 - (a * 3.1)},
+                        rotation = {0, 180, 0},
+                        guid = NewDeck[i]
+                    }
+                )
             else
-                Deck.takeObject({position = {21 + (b * 2.2),1.4 + (i * 0.1),8.3 - (a * 3.1)}, rotation = {0,180,0}, index = 1})
+                Deck.takeObject(
+                    {position = {21 + (b * 2.2), 1.4 + (i * 0.1), 8.3 - (a * 3.1)}, rotation = {0, 180, 0}, index = 1}
+                )
             end
         end
     else
         timer1 = nil
-        local button, index = FindButton(object, 'shufflecrisis')
-        object.editButton({index = index, label = 'Layout', click_function = 'Layout'})
+        local button, index = FindButton(object, "shufflecrisis")
+        object.editButton({index = index, label = "Layout", click_function = "Layout"})
     end
 end
 
 function shufflecrisis(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
 
     if timer2 == true then
-        local button, index = FindButton(object, 'shufflecrisis')
-        object.editButton({index = index, label = 'Layout', click_function = 'Layout'})
+        local button, index = FindButton(object, "shufflecrisis")
+        object.editButton({index = index, label = "Layout", click_function = "Layout"})
         timer2 = false
     end
     if timer2 == nil then
-        local button, index = FindButton(object, 'shufflecrisis')
-        object.editButton({index = index, label = 'OK?', click_function = 'shufflecrisis'})
+        local button, index = FindButton(object, "shufflecrisis")
+        object.editButton({index = index, label = "OK?", click_function = "shufflecrisis"})
         params = {}
         params.object = object
         params.color = playerColor
-        Timer.create({identifier = 't2', function_name = 'Timer2', parameters = params, delay = 2})
+        Timer.create({identifier = "t2", function_name = "Timer2", parameters = params, delay = 2})
         timer2 = true
         return
     end
 
-    local button, index = FindButton(object, 'Take2Destiny')
+    local button, index = FindButton(object, "Take2Destiny")
     if index ~= 0 then
         object.removeButton(index)
     end
-    local AddDestiny = {['click_function'] = 'Take2Destiny', ['label'] = 'Destiny', ['position'] = {9.8, 0.6, 1.65}, ['rotation'] =  {0, 0, 0}, ['width'] = 750, ['height'] = 150, ['font_size'] = 150}
+    local AddDestiny = {
+        ["click_function"] = "Take2Destiny",
+        ["label"] = "Destiny",
+        ["position"] = {9.8, 0.6, 1.65},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 750,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(AddDestiny)
     timer1 = nil
 
-    local Cards = {'TR','P','L','T','PI','E'}
+    local Cards = {"TR", "P", "L", "T", "PI", "E"}
     local CardsPos = {-11, -6.2, -1.3, 3.35, 8.1, 12.9}
-    for i, obj in ipairs(FindObject('CrisisTrigger').getObjects()) do
-        if obj.name == 'Card' then
-            for y=1,6,1 do
+    for i, obj in ipairs(FindObject("CrisisTrigger").getObjects()) do
+        if obj.name == "Card" then
+            for y = 1, 6, 1 do
                 if obj.getDescription() == Cards[y] then
                     obj.setPositionSmooth({CardsPos[y], 1.3, -20})
                 end
             end
         end
-        if obj.name == 'Deck' then
+        if obj.name == "Deck" then
             local DeckObjects = obj.getObjects()
-            for y=1,6,1 do
+            for y = 1, 6, 1 do
                 for t, objs in ipairs(DeckObjects) do
                     if objs.description == Cards[y] then
                         if t ~= #DeckObjects then
-                            obj.takeObject({position = {CardsPos[y], 1.3, -20}, rotation = {0,180,0}, guid = objs.guid})
+                            obj.takeObject(
+                                {position = {CardsPos[y], 1.3, -20}, rotation = {0, 180, 0}, guid = objs.guid}
+                            )
                         else
-                            obj.takeObject({position = {CardsPos[y], 1.3, -20}, rotation = {0,180,0}, index = 1})
+                            obj.takeObject({position = {CardsPos[y], 1.3, -20}, rotation = {0, 180, 0}, index = 1})
                         end
                     end
                 end
@@ -737,26 +862,35 @@ end
 
 function Destiny(object, playerColor)
     --Builds the Destiny Deck
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
 
-    local Deck = ReturnDeck('DestinyTrigger')
+    local Deck = ReturnDeck("DestinyTrigger")
     if Deck == nil then
-        local triggers = {'TreacheryTrigger','PoliticsTrigger','LeadershipTrigger','TacticsTrigger','PilotingTrigger','EngineeringTrigger'}
-        for y=1,6,1 do
+        local triggers = {
+            "TreacheryTrigger",
+            "PoliticsTrigger",
+            "LeadershipTrigger",
+            "TacticsTrigger",
+            "PilotingTrigger",
+            "EngineeringTrigger"
+        }
+        for y = 1, 6, 1 do
             Deck = ReturnDeck(triggers[y])
             if Deck ~= nil then
-                   Deck.takeObject({position = {-15.2,1.2 + (0.1 * y),13.4}, rotation = {0,180,180}, index = 1})
-                   Deck.takeObject({position = {-15.2,1.2 + (0.1 * (y + 6)),13.4}, rotation = {0,180,180}, index = 1})
+                Deck.takeObject({position = {-15.2, 1.2 + (0.1 * y), 13.4}, rotation = {0, 180, 180}, index = 1})
+                Deck.takeObject({position = {-15.2, 1.2 + (0.1 * (y + 6)), 13.4}, rotation = {0, 180, 180}, index = 1})
             end
         end
-        Timer.create({identifier = 't5', function_name = 'Timer5', parameters = params, delay = 3})
+        Timer.create({identifier = "t5", function_name = "Timer5", parameters = params, delay = 3})
         timer5 = true
     end
 end
 
 function Timer5(params)
     if timer5 == true then
-        local Deck = ReturnDeck('DestinyTrigger')
+        local Deck = ReturnDeck("DestinyTrigger")
         Deck.shuffle()
         timer5 = nil
     end
@@ -770,13 +904,13 @@ function FindObject(Name)
     end
 end
 
-function updateDisplay(object,display,count,color)
+function updateDisplay(object, display, count, color)
     local button_parameters = {}
     local button, index = FindButton(object, display["click_function"])
-    button_parameters.label =  tostring(count)
+    button_parameters.label = tostring(count)
     button_parameters.index = index
     object.editButton(button_parameters)
-    sendMessage(color .. ' changed ' .. display["click_function"] .. ' to ' .. tostring(count), color)
+    sendMessage(color .. " changed " .. display["click_function"] .. " to " .. tostring(count), color)
 end
 
 function counter(object)
@@ -785,38 +919,148 @@ function counter(object)
     populationcount = 12
     moralecount = 10
 
-    FuelDisplay = {['click_function'] = 'Fuel', ['label'] = '8', ['position'] = {1.05, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 350, ['height'] = 350, ['font_size'] = 250}
+    FuelDisplay = {
+        ["click_function"] = "Fuel",
+        ["label"] = "8",
+        ["position"] = {1.05, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 350,
+        ["height"] = 350,
+        ["font_size"] = 250
+    }
     object.createButton(FuelDisplay)
-    FoodDisplay = {['click_function'] = 'Food', ['label'] = '8', ['position'] = {3.1, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 350, ['height'] = 350, ['font_size'] = 250}
+    FoodDisplay = {
+        ["click_function"] = "Food",
+        ["label"] = "8",
+        ["position"] = {3.1, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 350,
+        ["height"] = 350,
+        ["font_size"] = 250
+    }
     object.createButton(FoodDisplay)
-    MoraleDisplay = {['click_function'] = 'Morale', ['label'] = '10', ['position'] = {5.2, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 350, ['height'] = 350, ['font_size'] = 250}
+    MoraleDisplay = {
+        ["click_function"] = "Morale",
+        ["label"] = "10",
+        ["position"] = {5.2, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 350,
+        ["height"] = 350,
+        ["font_size"] = 250
+    }
     object.createButton(MoraleDisplay)
-    PopulationDisplay = {['click_function'] = 'Population', ['label'] = '12', ['position'] = {7.3, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 350, ['height'] = 350, ['font_size'] = 250}
+    PopulationDisplay = {
+        ["click_function"] = "Population",
+        ["label"] = "12",
+        ["position"] = {7.3, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 350,
+        ["height"] = 350,
+        ["font_size"] = 250
+    }
     object.createButton(PopulationDisplay)
 
-    local IncreaseFuel = {['click_function'] = 'IncreaseFuel', ['label'] = '>', ['position'] = {1.6, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local IncreaseFuel = {
+        ["click_function"] = "IncreaseFuel",
+        ["label"] = ">",
+        ["position"] = {1.6, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(IncreaseFuel)
-    local DecreaseFuel = {['click_function'] = 'DecreaseFuel', ['label'] = '<', ['position'] = {0.5, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local DecreaseFuel = {
+        ["click_function"] = "DecreaseFuel",
+        ["label"] = "<",
+        ["position"] = {0.5, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(DecreaseFuel)
-    local IncreaseFood = {['click_function'] = 'IncreaseFood', ['label'] = '>', ['position'] = {3.65, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local IncreaseFood = {
+        ["click_function"] = "IncreaseFood",
+        ["label"] = ">",
+        ["position"] = {3.65, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(IncreaseFood)
-    local DecreaseFood = {['click_function'] = 'DecreaseFood', ['label'] = '<', ['position'] = {2.55, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local DecreaseFood = {
+        ["click_function"] = "DecreaseFood",
+        ["label"] = "<",
+        ["position"] = {2.55, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(DecreaseFood)
-    local IncreaseMorale = {['click_function'] = 'IncreaseMorale', ['label'] = '>', ['position'] = {5.7, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local IncreaseMorale = {
+        ["click_function"] = "IncreaseMorale",
+        ["label"] = ">",
+        ["position"] = {5.7, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(IncreaseMorale)
-    local DecreaseMorale = {['click_function'] = 'DecreaseMorale', ['label'] = '<', ['position'] = {4.65, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local DecreaseMorale = {
+        ["click_function"] = "DecreaseMorale",
+        ["label"] = "<",
+        ["position"] = {4.65, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(DecreaseMorale)
-    local IncreasePopulation = {['click_function'] = 'IncreasePopulation', ['label'] = '>', ['position'] = {7.85, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local IncreasePopulation = {
+        ["click_function"] = "IncreasePopulation",
+        ["label"] = ">",
+        ["position"] = {7.85, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(IncreasePopulation)
-    local DecreasePopulation = {['click_function'] = 'DecreasePopulation', ['label'] = '<', ['position'] = {6.75, 0.60, -7}, ['rotation'] =  {0, 0, 0}, ['width'] = 150, ['height'] = 150, ['font_size'] = 150}
+    local DecreasePopulation = {
+        ["click_function"] = "DecreasePopulation",
+        ["label"] = "<",
+        ["position"] = {6.75, 0.60, -7},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 150,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(DecreasePopulation)
 
-    local LayoutButton = {['click_function'] = 'Layout', ['label'] = 'Layout', ['position'] = {9.8, 0.6, 3}, ['rotation'] =  {0, 0, 0}, ['width'] = 750, ['height'] = 150, ['font_size'] = 150}
+    local LayoutButton = {
+        ["click_function"] = "Layout",
+        ["label"] = "Layout",
+        ["position"] = {9.8, 0.6, 3},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 750,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(LayoutButton)
-    local AddDestiny = {['click_function'] = 'Take2Destiny', ['label'] = 'Destiny', ['position'] = {9.8, 0.6, 1.65}, ['rotation'] =  {0, 0, 0}, ['width'] = 750, ['height'] = 150, ['font_size'] = 150}
+    local AddDestiny = {
+        ["click_function"] = "Take2Destiny",
+        ["label"] = "Destiny",
+        ["position"] = {9.8, 0.6, 1.65},
+        ["rotation"] = {0, 0, 0},
+        ["width"] = 750,
+        ["height"] = 150,
+        ["font_size"] = 150
+    }
     object.createButton(AddDestiny)
-
-
 end
 function Fuel()
 end
@@ -827,758 +1071,710 @@ end
 function Population()
 end
 
-
 function IncreaseFood(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     foodcount = foodcount + 1
     if foodcount > 15 then
         foodcount = 15
     end
-    updateDisplay(object,FoodDisplay,foodcount, playerColor)
+    updateDisplay(object, FoodDisplay, foodcount, playerColor)
 end
 function DecreaseFood(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     foodcount = foodcount - 1
     if foodcount < 0 then
         foodcount = 0
     end
-    updateDisplay(object,FoodDisplay,foodcount, playerColor)
+    updateDisplay(object, FoodDisplay, foodcount, playerColor)
 end
 
 function IncreaseFuel(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     fuelcount = fuelcount + 1
     if fuelcount > 15 then
         fuelcount = 15
     end
-    updateDisplay(object,FuelDisplay,fuelcount, playerColor)
+    updateDisplay(object, FuelDisplay, fuelcount, playerColor)
 end
 function DecreaseFuel(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     fuelcount = fuelcount - 1
     if fuelcount < 0 then
         fuelcount = 0
     end
-    updateDisplay(object,FuelDisplay,fuelcount, playerColor)
+    updateDisplay(object, FuelDisplay, fuelcount, playerColor)
 end
 function IncreasePopulation(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     populationcount = populationcount + 1
     if populationcount > 15 then
         populationcount = 15
     end
-    updateDisplay(object,PopulationDisplay,populationcount, playerColor)
+    updateDisplay(object, PopulationDisplay, populationcount, playerColor)
 end
 function DecreasePopulation(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     populationcount = populationcount - 1
     if populationcount < 0 then
         populationcount = 0
     end
-    updateDisplay(object,PopulationDisplay,populationcount, playerColor)
+    updateDisplay(object, PopulationDisplay, populationcount, playerColor)
 end
 function IncreaseMorale(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     moralecount = moralecount + 1
     if moralecount > 15 then
         moralecount = 15
     end
-    updateDisplay(object,MoraleDisplay,moralecount, playerColor)
+    updateDisplay(object, MoraleDisplay, moralecount, playerColor)
 end
 function DecreaseMorale(object, playerColor)
-    if HostLock(playerColor) == false then return end
+    if HostLock(playerColor) == false then
+        return
+    end
     moralecount = moralecount - 1
     if moralecount < 0 then
         moralecount = 0
     end
-    updateDisplay(object,MoraleDisplay,moralecount, playerColor)
+    updateDisplay(object, MoraleDisplay, moralecount, playerColor)
 end
 
 function PrintSuccession(object, playerColor)
-for i=1,3,1 do
-    if i == 1 then
-        printToAll('----Admiral----',{1,0,0})
-    end
-    if i == 2 then
-        printToAll('----President----',{1,0,0})
-    end
-    if i == 3 then
-        printToAll('----Cag----',{1,0,0})
-    end
-    for y, test in ipairs(Titles[i]) do
-        local data = test["Object"].getTable('Data')
-        printToAll(y .. ' : ' .. data["Character"],{1,0,0})
+    for i = 1, 3, 1 do
+        if i == 1 then
+            printToAll("----Admiral----", {1, 0, 0})
+        end
+        if i == 2 then
+            printToAll("----President----", {1, 0, 0})
+        end
+        if i == 3 then
+            printToAll("----Cag----", {1, 0, 0})
+        end
+        for y, test in ipairs(Titles[i]) do
+            local data = test["Object"].getTable("Data")
+            printToAll(y .. " : " .. data["Character"], {1, 0, 0})
+        end
     end
 end
-end
-
-
-
 
 function changeimg()
-
-obj_parameters = {}
-obj_parameters.type = 'Custom_Board'
-obj_parameters.rotation = {0,180,0}
-obj_parameters.position = {0,0.5,0}
-obj_parameters.scale = {1.2,1.2,1.2}
-obj = spawnObject(obj_parameters)
-
-custom = {}
-counter(obj)
-
-
-obj.createButton({label = 'BUILD', click_function = 'Destiny', rotation = {0, 0, 0},
-                    position = {-7.4, 0.6, -8.3}, width = 550, height = 250, font_size = 150})
-obj.createButton({label = 'S', click_function = 'PrintSuccession', rotation = {0, 0, 0},
-                    position = {-8.5, 0.6, -8.3}, width = 300, height = 250, font_size = 150})
-
-
-JumpTracker(obj)
-
-takeobj("Civilian Ships","Null",{12.7,1,19},{180,270,0},ExtrasBag,'Civs')
-takeobj("Galactica Damage","Null",{12.7,1,21.5},{180,270,0},ExtrasBag,'Shuffle')
-
-
-
-
-
-
-if selectedexpansion[1] == true and selectedexpansion[2] == false and selectedexpansion[3] == false then
-    custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604631318/4FC4FAA422B7D2A1BAF59D9FD49129FCF532BC9D/'
-    takeobj("Caprica","Null",{1.7,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("Cylon Fleet","Null",{4.1,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("HumanFleet","Null",{6.5,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("ResurrectionShip","Null",{8.9,0.5,8},{0,180,0},LocationsBag,'Lock')
-end
-
-if selectedexpansion[2] == true and selectedexpansion[3] == false then
-    custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604632567/8958C6293EBA065D1A9E543F87D5871EE49F1A0A/'
-    takeobj("Caprica Day","Null",{1.7,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("Cylon Fleet","Null",{4.1,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("Human Fleet","Null",{6.5,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("Resurrection Ship","Null",{8.9,0.5,8},{0,180,0},LocationsBag,'Lock')
-end
-if selectedexpansion[3] == true then
-    custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604633450/2FAABE4773B324A08E20B87A5107331645D67C34/'
-    takeobj("Quorum Chamber","Null",{-14,0.5,8.4},{0,180,0},LocationsBag,'Lock')
-    takeobj("Press Room","Null",{-10.5,0.5,8.4},{0,180,0},LocationsBag,'Lock')
-    takeobj("Presidents Office","Null",{-7,0.5,8.4},{0,180,0},LocationsBag,'Lock')
-    takeobj("Admin","Null",{-3.5,0.5,8.4},{0,180,0},LocationsBag,'Lock')
-    takeobj("Caprica Day","Null",{1.7,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("Cylon Fleet","Null",{4.1,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("Human Fleet","Null",{6.5,0.5,8},{0,180,0},LocationsBag,'Lock')
-    takeobj("Resurrection Ship","Null",{8.9,0.5,8},{0,180,0},LocationsBag,'Lock')
-else
-    takeobj("PressRoom","Null",{-12,0.5,8.4},{0,180,0},LocationsBag,'Lock')
-    takeobj("PresidentsOffice","Null",{-8.6,0.5,8.4},{0,180,0},LocationsBag,'Lock')
-    takeobj("Administration","Null",{-5.3,0.5,8.4},{0,180,0},LocationsBag,'Lock')
-end
-obj.setCustomObject(custom)
-
-takeobj("FTLControl","Null",{-9.3,0.5,-5.9},{0,180,0},LocationsBag,'Lock')
-takeobj("WeaponsControl","Null",{-5.6,0.5,-3.8},{0,180,0},LocationsBag,'Lock')
-takeobj("Command","Null",{-5.6,0.5,-8.1},{0,180,0},LocationsBag,'Lock')
-takeobj("Communications","Null",{-1.9,0.5,-3.8},{0,180,0},LocationsBag,'Lock')
-takeobj("AdmiralsQuarters","Null",{-1.9,0.5,-8.1},{0,180,0},LocationsBag,'Lock')
-takeobj("ResearchLab","Null",{1.8,0.5,-3.8},{0,180,0},LocationsBag,'Lock')
-takeobj("HangarDeck","Null",{1.8,0.5,-8.1},{0,180,0},LocationsBag,'Lock')
-takeobj("Armory","Null",{5.5,0.5,-5.9},{0,180,0},LocationsBag,'Lock')
-takeobj("Sickbay","Null",{9.2,0.5,-3.8},{0,180,0},LocationsBag,'Lock')
-takeobj("Brig","Null",{9.2,0.5,-8.1},{0,180,0},LocationsBag,'Lock')
-
-
-
-
-
-
-if selectedexpansion[2] == true then
     obj_parameters = {}
-    obj_parameters.type = 'Custom_Board'
-    obj_parameters.rotation = {0,180,0}
-    obj_parameters.position = {30,1,-11.5}
-    obj_parameters.scale = {0.4,0.4,0.4}
+    obj_parameters.type = "Custom_Board"
+    obj_parameters.rotation = {0, 180, 0}
+    obj_parameters.position = {0, 0.5, 0}
+    obj_parameters.scale = {1.2, 1.2, 1.2}
     obj = spawnObject(obj_parameters)
 
     custom = {}
-    custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604629789/15F762A4D78B1886FE91FF508EFBB476658509BD/'
-    obj.setCustomObject(custom)
-    takeobj("PegasusCIC","Null",{22.7,0.5,-13.35},{0,180,0},LocationsBag,'Lock')
-    takeobj("Airlock","Null",{27.5,0.5,-13.9},{0,180,0},LocationsBag,'Lock')
-    takeobj("MainBatteries","Null",{32.3,0.5,-13.9},{0,180,0},LocationsBag,'Lock')
-    takeobj("EngineRoom","Null",{37.2,0.5,-13.35},{0,180,0},LocationsBag,'Lock')
+    counter(obj)
 
-    takeobj("Pegasus Damage","Null",{30,1.5,-9},{180,270,0},ExtrasBag,'Shuffle')
+    obj.createButton(
+        {
+            label = "BUILD",
+            click_function = "Destiny",
+            rotation = {0, 0, 0},
+            position = {-7.4, 0.6, -8.3},
+            width = 550,
+            height = 250,
+            font_size = 150
+        }
+    )
+    obj.createButton(
+        {
+            label = "S",
+            click_function = "PrintSuccession",
+            rotation = {0, 0, 0},
+            position = {-8.5, 0.6, -8.3},
+            width = 300,
+            height = 250,
+            font_size = 150
+        }
+    )
 
-    if selectedpegasus[1] == true then
-        obj_parameters = {}
-        obj_parameters.type = 'Custom_Board'
-        obj_parameters.rotation = {0,180,0}
-        obj_parameters.position = {30,1, 11.5}
-        obj_parameters.scale = {0.4,0.4,0.4}
-        obj = spawnObject(obj_parameters)
+    JumpTracker(obj)
 
-        custom = {}
-        custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604628826/5AB18DB4A406A33A9815A203B3D0875F9B7671D2/'
-        obj.setCustomObject(custom)
-        takeobj("MedicalCenter","Null",{23,0.5,14.1},{0,180,0},LocationsBag,'Lock')
-        takeobj("ResistanceHQ","Null",{26.7,0.5,14.1},{0,180,0},LocationsBag,'Lock')
+    takeobj("Civilian Ships", "Null", {12.7, 1, 19}, {180, 270, 0}, ExtrasBag, "Civs")
+    takeobj("Galactica Damage", "Null", {12.7, 1, 21.5}, {180, 270, 0}, ExtrasBag, "Shuffle")
 
-        takeobj("Detention","Null",{23,0.5,9.6},{0,180,0},LocationsBag,'Lock')
-        takeobj("OccupationAuthority","Null",{26.8,0.5,9.3},{0,180,0},LocationsBag,'Lock')
-        takeobj("BreedersCanyon","Null",{30.2,0.5,9.3},{0,180,0},LocationsBag,'Lock')
-        takeobj("Shipyard","Null",{33.65,0.5,9.3},{0,180,0},LocationsBag,'Lock')
-        takeobj("NewCapCrisis","Null",{21.5,2,19},{180,180,0},ExtrasBag,'Shuffle')
-    end
-end
-
-if selectedexpansion[3] == true then
-    if selecteddaybreak[1] == true then
-
-        obj_parameters = {}
-        obj_parameters.type = 'Custom_Board'
-        obj_parameters.rotation = {0,180,0}
-        obj_parameters.position = {30,1,11.5}
-        obj_parameters.scale = {0.4,0.4,0.4}
-        obj = spawnObject(obj_parameters)
-
-        custom = {}
-        custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604629396/7B76901E16C78C3F9759CFDAA4C454CB05E68B87/'
-        obj.setCustomObject(custom)
-        takeobj("Bridge","Null",{22.9,0.5,9.8},{0,180,0},LocationsBag,'Lock')
-        takeobj("TacticalPlot","Null",{27.5,0.5,9.8},{0,180,0},LocationsBag,'Lock')
-        takeobj("CaptainsCabin","Null",{31.9,0.5,9.8},{0,180,0},LocationsBag,'Lock')
-
-        obj_parameters = {}
-        obj_parameters.type = 'Custom_Board'
-        obj_parameters.rotation = {0,180,0}
-        obj_parameters.position = {-30,1,11.5}
-        obj_parameters.scale = {0.4,0.4,0.4}
-        obj = spawnObject(obj_parameters)
-
-        custom = {}
-        custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604630379/872F312BD10E8C1010975B059F6D3E3A9F31BE6A/'
-        obj.setCustomObject(custom)
-        takeobj("RaiderBay","Null",{-24.4,0.5,10},{0,180,0},LocationsBag,'Lock')
-        takeobj("Datastream","Null",{-30,0.5,9.5},{0,180,0},LocationsBag,'Lock')
-        takeobj("HybridTank","Null",{-35.6,0.5,10},{0,180,0},LocationsBag,'Lock')
-
-        takeobj("Basestar Allegiance Marker","Null",{-30,1.4,13.5},{0,180,0},ExtrasBag)
-        takeobj("MissionCards","Null",{30,1.5,13},{180,0,0},ExtrasBag,'Shuffle')
-
-
-    end
-end
-
-
-if selectedexpansion[4] == true then
-    if selectedexodus[1] == true then
-        takeobj("Crossroads","Null",{-20,2,15},{180,0,0},ExtrasBag,'Shuffle')
-        takeobj("Allies","Null",{-25,2,15},{180,270,0},ExtrasBag,'Shuffle')
-
-        takeobj("Ally1","Null",{-33,2,16},{0,0,0},ExtrasBag)
-        takeobj("Ally 1","Null",{-33,2,15},{0,0,0},ExtrasBag)
-        takeobj("Ally2","Null",{-31,2,16},{0,0,0},ExtrasBag)
-        takeobj("Ally 2","Null",{-31,2,15},{0,0,0},ExtrasBag)
-        takeobj("Ally3","Null",{-29,2,16},{0,0,0},ExtrasBag)
-        takeobj("Ally 3","Null",{-29,2,15},{0,0,0},ExtrasBag)
-
-        takeobj("Trauma Tokens","Null",{-26,1,19},{180,270,0},ExtrasBag,'Shuffle')
-
+    if selectedexpansion[1] == true and selectedexpansion[2] == false and selectedexpansion[3] == false then
+        custom.image =
+            "http://cloud-3.steamusercontent.com/ugc/859474057604631318/4FC4FAA422B7D2A1BAF59D9FD49129FCF532BC9D/"
+        takeobj("Caprica", "Null", {1.7, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Cylon Fleet", "Null", {4.1, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("HumanFleet", "Null", {6.5, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("ResurrectionShip", "Null", {8.9, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
     end
 
-
-    if selectedexodus[2] == true then
-        obj_parameters = {}
-        obj_parameters.type = 'Custom_Board'
-        obj_parameters.rotation = {0,180,0}
-        obj_parameters.position = {-30,1,-6.5}
-        obj_parameters.scale = {0.75,0.75,0.75}
-        obj = spawnObject(obj_parameters)
-        CylonTracker(obj)
-        custom = {}
-        custom.image = 'http://cloud-3.steamusercontent.com/ugc/859474057604630872/60F9E21088B76AC88BEE5372932DBD1E158875D7/'
-        obj.setCustomObject(custom)
-
-
-        takeobj("Basestar Bridge","Null",{-30,0.5,-6.3},{0,0,0},LocationsBag,'Lock')
-        takeobj("Top Left","Null",{-31.75,0.5,-9.2},{0,90,0},LocationsBag,'Lock')
-        takeobj("Top Right","Null",{-28.4,0.5,-9.2},{0,90,0},LocationsBag,'Lock')
-        takeobj("Bottom Left","Null",{-31.75,0.5,-10.9},{0,90,0},LocationsBag,'Lock')
-        takeobj("Bottom Right","Null",{-28.4,0.5,-10.9},{0,90,0},LocationsBag,'Lock')
-        takeobj("Exodus Basestar Damage","Null",{8,1,19},{180,270,0},ExtrasBag,'Shuffle')
+    if selectedexpansion[2] == true and selectedexpansion[3] == false then
+        custom.image =
+            "http://cloud-3.steamusercontent.com/ugc/859474057604632567/8958C6293EBA065D1A9E543F87D5871EE49F1A0A/"
+        takeobj("Caprica Day", "Null", {1.7, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Cylon Fleet", "Null", {4.1, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Human Fleet", "Null", {6.5, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Resurrection Ship", "Null", {8.9, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+    end
+    if selectedexpansion[3] == true then
+        custom.image =
+            "http://cloud-3.steamusercontent.com/ugc/859474057604633450/2FAABE4773B324A08E20B87A5107331645D67C34/"
+        takeobj("Quorum Chamber", "Null", {-14, 0.5, 8.4}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Press Room", "Null", {-10.5, 0.5, 8.4}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Presidents Office", "Null", {-7, 0.5, 8.4}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Admin", "Null", {-3.5, 0.5, 8.4}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Caprica Day", "Null", {1.7, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Cylon Fleet", "Null", {4.1, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Human Fleet", "Null", {6.5, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Resurrection Ship", "Null", {8.9, 0.5, 8}, {0, 180, 0}, LocationsBag, "Lock")
     else
-        takeobj("Basestar Damage","Null",{8,1,19},{180,270,0},ExtrasBag,'Shuffle')
+        takeobj("PressRoom", "Null", {-12, 0.5, 8.4}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("PresidentsOffice", "Null", {-8.6, 0.5, 8.4}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Administration", "Null", {-5.3, 0.5, 8.4}, {0, 180, 0}, LocationsBag, "Lock")
     end
-else
-    takeobj("Basestar Damage","Null",{8,1,19},{180,270,0},ExtrasBag,'Shuffle')
+    obj.setCustomObject(custom)
+
+    takeobj("FTLControl", "Null", {-9.3, 0.5, -5.9}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("WeaponsControl", "Null", {-5.6, 0.5, -3.8}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("Command", "Null", {-5.6, 0.5, -8.1}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("Communications", "Null", {-1.9, 0.5, -3.8}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("AdmiralsQuarters", "Null", {-1.9, 0.5, -8.1}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("ResearchLab", "Null", {1.8, 0.5, -3.8}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("HangarDeck", "Null", {1.8, 0.5, -8.1}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("Armory", "Null", {5.5, 0.5, -5.9}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("Sickbay", "Null", {9.2, 0.5, -3.8}, {0, 180, 0}, LocationsBag, "Lock")
+    takeobj("Brig", "Null", {9.2, 0.5, -8.1}, {0, 180, 0}, LocationsBag, "Lock")
+
+    if selectedexpansion[2] == true then
+        obj_parameters = {}
+        obj_parameters.type = "Custom_Board"
+        obj_parameters.rotation = {0, 180, 0}
+        obj_parameters.position = {30, 1, -11.5}
+        obj_parameters.scale = {0.4, 0.4, 0.4}
+        obj = spawnObject(obj_parameters)
+
+        custom = {}
+        custom.image =
+            "http://cloud-3.steamusercontent.com/ugc/859474057604629789/15F762A4D78B1886FE91FF508EFBB476658509BD/"
+        obj.setCustomObject(custom)
+        takeobj("PegasusCIC", "Null", {22.7, 0.5, -13.35}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("Airlock", "Null", {27.5, 0.5, -13.9}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("MainBatteries", "Null", {32.3, 0.5, -13.9}, {0, 180, 0}, LocationsBag, "Lock")
+        takeobj("EngineRoom", "Null", {37.2, 0.5, -13.35}, {0, 180, 0}, LocationsBag, "Lock")
+
+        takeobj("Pegasus Damage", "Null", {30, 1.5, -9}, {180, 270, 0}, ExtrasBag, "Shuffle")
+
+        if selectedpegasus[1] == true then
+            obj_parameters = {}
+            obj_parameters.type = "Custom_Board"
+            obj_parameters.rotation = {0, 180, 0}
+            obj_parameters.position = {30, 1, 11.5}
+            obj_parameters.scale = {0.4, 0.4, 0.4}
+            obj = spawnObject(obj_parameters)
+
+            custom = {}
+            custom.image =
+                "http://cloud-3.steamusercontent.com/ugc/859474057604628826/5AB18DB4A406A33A9815A203B3D0875F9B7671D2/"
+            obj.setCustomObject(custom)
+            takeobj("MedicalCenter", "Null", {23, 0.5, 14.1}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("ResistanceHQ", "Null", {26.7, 0.5, 14.1}, {0, 180, 0}, LocationsBag, "Lock")
+
+            takeobj("Detention", "Null", {23, 0.5, 9.6}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("OccupationAuthority", "Null", {26.8, 0.5, 9.3}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("BreedersCanyon", "Null", {30.2, 0.5, 9.3}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("Shipyard", "Null", {33.65, 0.5, 9.3}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("NewCapCrisis", "Null", {21.5, 2, 19}, {180, 180, 0}, ExtrasBag, "Shuffle")
+        end
+    end
+
+    if selectedexpansion[3] == true then
+        if selecteddaybreak[1] == true then
+            obj_parameters = {}
+            obj_parameters.type = "Custom_Board"
+            obj_parameters.rotation = {0, 180, 0}
+            obj_parameters.position = {30, 1, 11.5}
+            obj_parameters.scale = {0.4, 0.4, 0.4}
+            obj = spawnObject(obj_parameters)
+
+            custom = {}
+            custom.image =
+                "http://cloud-3.steamusercontent.com/ugc/859474057604629396/7B76901E16C78C3F9759CFDAA4C454CB05E68B87/"
+            obj.setCustomObject(custom)
+            takeobj("Bridge", "Null", {22.9, 0.5, 9.8}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("TacticalPlot", "Null", {27.5, 0.5, 9.8}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("CaptainsCabin", "Null", {31.9, 0.5, 9.8}, {0, 180, 0}, LocationsBag, "Lock")
+
+            obj_parameters = {}
+            obj_parameters.type = "Custom_Board"
+            obj_parameters.rotation = {0, 180, 0}
+            obj_parameters.position = {-30, 1, 11.5}
+            obj_parameters.scale = {0.4, 0.4, 0.4}
+            obj = spawnObject(obj_parameters)
+
+            custom = {}
+            custom.image =
+                "http://cloud-3.steamusercontent.com/ugc/859474057604630379/872F312BD10E8C1010975B059F6D3E3A9F31BE6A/"
+            obj.setCustomObject(custom)
+            takeobj("RaiderBay", "Null", {-24.4, 0.5, 10}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("Datastream", "Null", {-30, 0.5, 9.5}, {0, 180, 0}, LocationsBag, "Lock")
+            takeobj("HybridTank", "Null", {-35.6, 0.5, 10}, {0, 180, 0}, LocationsBag, "Lock")
+
+            takeobj("Basestar Allegiance Marker", "Null", {-30, 1.4, 13.5}, {0, 180, 0}, ExtrasBag)
+            takeobj("MissionCards", "Null", {30, 1.5, 13}, {180, 0, 0}, ExtrasBag, "Shuffle")
+        end
+    end
+
+    if selectedexpansion[4] == true then
+        if selectedexodus[1] == true then
+            takeobj("Crossroads", "Null", {-20, 2, 15}, {180, 0, 0}, ExtrasBag, "Shuffle")
+            takeobj("Allies", "Null", {-25, 2, 15}, {180, 270, 0}, ExtrasBag, "Shuffle")
+
+            takeobj("Ally1", "Null", {-33, 2, 16}, {0, 0, 0}, ExtrasBag)
+            takeobj("Ally 1", "Null", {-33, 2, 15}, {0, 0, 0}, ExtrasBag)
+            takeobj("Ally2", "Null", {-31, 2, 16}, {0, 0, 0}, ExtrasBag)
+            takeobj("Ally 2", "Null", {-31, 2, 15}, {0, 0, 0}, ExtrasBag)
+            takeobj("Ally3", "Null", {-29, 2, 16}, {0, 0, 0}, ExtrasBag)
+            takeobj("Ally 3", "Null", {-29, 2, 15}, {0, 0, 0}, ExtrasBag)
+
+            takeobj("Trauma Tokens", "Null", {-26, 1, 19}, {180, 270, 0}, ExtrasBag, "Shuffle")
+        end
+
+        if selectedexodus[2] == true then
+            obj_parameters = {}
+            obj_parameters.type = "Custom_Board"
+            obj_parameters.rotation = {0, 180, 0}
+            obj_parameters.position = {-30, 1, -6.5}
+            obj_parameters.scale = {0.75, 0.75, 0.75}
+            obj = spawnObject(obj_parameters)
+            CylonTracker(obj)
+            custom = {}
+            custom.image =
+                "http://cloud-3.steamusercontent.com/ugc/859474057604630872/60F9E21088B76AC88BEE5372932DBD1E158875D7/"
+            obj.setCustomObject(custom)
+
+            takeobj("Basestar Bridge", "Null", {-30, 0.5, -6.3}, {0, 0, 0}, LocationsBag, "Lock")
+            takeobj("Top Left", "Null", {-31.75, 0.5, -9.2}, {0, 90, 0}, LocationsBag, "Lock")
+            takeobj("Top Right", "Null", {-28.4, 0.5, -9.2}, {0, 90, 0}, LocationsBag, "Lock")
+            takeobj("Bottom Left", "Null", {-31.75, 0.5, -10.9}, {0, 90, 0}, LocationsBag, "Lock")
+            takeobj("Bottom Right", "Null", {-28.4, 0.5, -10.9}, {0, 90, 0}, LocationsBag, "Lock")
+            takeobj("Exodus Basestar Damage", "Null", {8, 1, 19}, {180, 270, 0}, ExtrasBag, "Shuffle")
+        else
+            takeobj("Basestar Damage", "Null", {8, 1, 19}, {180, 270, 0}, ExtrasBag, "Shuffle")
+        end
+    else
+        takeobj("Basestar Damage", "Null", {8, 1, 19}, {180, 270, 0}, ExtrasBag, "Shuffle")
+    end
 end
-
-end
-
-
-
-
 
 function BuildSupercrisisCards()
     local position = {}
-    position['x'] = 16
-    position['y'] = 1
-    position['z'] = 19
-    local rotation = {180 , 0,  0}
+    position["x"] = 16
+    position["y"] = 1
+    position["z"] = 19
+    local rotation = {180, 0, 0}
 
-    takeobj('SupercrisisCards (B)','Null',position,rotation,SupercrisisCardsBag)
+    takeobj("SupercrisisCards (B)", "Null", position, rotation, SupercrisisCardsBag)
     if selectedexpansion[2] == true then
-        position['y'] = 2
-        takeobj('SupercrisisCards (P)','Null',position,rotation,SupercrisisCardsBag)
+        position["y"] = 2
+        takeobj("SupercrisisCards (P)", "Null", position, rotation, SupercrisisCardsBag)
     end
     if selectedexpansion[4] == true then
-        position['y'] = 4
-        takeobj('SupercrisisCards (E)','Null',position,rotation,SupercrisisCardsBag)
+        position["y"] = 4
+        takeobj("SupercrisisCards (E)", "Null", position, rotation, SupercrisisCardsBag)
         if selectedexodus[2] == true then
-            position['y'] = 5
-            takeobj('SupercrisisCards (CAG)','Null',position,rotation,SupercrisisCardsBag)
+            position["y"] = 5
+            takeobj("SupercrisisCards (CAG)", "Null", position, rotation, SupercrisisCardsBag)
         end
     end
-
-
-
-
 end
-
 
 function BuildCrisisCards()
-
     local position = {}
-    position['x'] = 20
-    position['y'] = 1
-    position['z'] = 3.75
-    local rotation = {180 , 0,  0}
+    position["x"] = 20
+    position["y"] = 1
+    position["z"] = 3.75
+    local rotation = {180, 0, 0}
 
-    takeobj('CrisisCards (B)','Null',position,rotation,CrisisCardsBag)
+    takeobj("CrisisCards (B)", "Null", position, rotation, CrisisCardsBag)
     if selectedexpansion[2] == true then
-    --    position['y'] = 2
-        takeobj('CrisisCards (P)','Null',position,rotation,CrisisCardsBag)
+        --    position['y'] = 2
+        takeobj("CrisisCards (P)", "Null", position, rotation, CrisisCardsBag)
         if selectedexodus[2] ~= true then
-            takeobj('CrisisCards (PCAG)','Null',position,rotation,CrisisCardsBag)
+            takeobj("CrisisCards (PCAG)", "Null", position, rotation, CrisisCardsBag)
         end
     end
-
 
     if selectedexpansion[3] == true then
-    --    position['y'] = 3
-        takeobj('CrisisCards (D)','Null',position,rotation,CrisisCardsBag)
+        --    position['y'] = 3
+        takeobj("CrisisCards (D)", "Null", position, rotation, CrisisCardsBag)
         if selectedexodus[2] ~= true then
-            takeobj('CrisisCards (DCAG)','Null',position,rotation,CrisisCardsBag)
+            takeobj("CrisisCards (DCAG)", "Null", position, rotation, CrisisCardsBag)
         end
     end
-
 
     if selectedexpansion[4] == true then
-    --    position['y'] = 4
-        takeobj('CrisisCards (E)','Null',position,rotation,CrisisCardsBag)
+        --    position['y'] = 4
+        takeobj("CrisisCards (E)", "Null", position, rotation, CrisisCardsBag)
         if selectedexodus[2] == true then
-    --        position['y'] = 5
-            takeobj('CrisisCards (ECAG)','Null',position,rotation,CrisisCardsBag)
+            --        position['y'] = 5
+            takeobj("CrisisCards (ECAG)", "Null", position, rotation, CrisisCardsBag)
         else
-            takeobj('CrisisCards (BCAG)','Null',position,rotation,CrisisCardsBag)
+            takeobj("CrisisCards (BCAG)", "Null", position, rotation, CrisisCardsBag)
         end
     else
-        takeobj('CrisisCards (BCAG)','Null',position,rotation,CrisisCardsBag)
+        takeobj("CrisisCards (BCAG)", "Null", position, rotation, CrisisCardsBag)
     end
-
-
-
 end
-
-
-
 
 function BuildDestination()
+    local position = {}
+    position["x"] = -13
+    position["y"] = 1
+    position["z"] = 19
+    local rotation = {180, 0, 0}
 
-
-
-local position = {}
-position['x'] = -13
-position['y'] = 1
-position['z'] = 19
-local rotation = {180 , 0,  0}
-
-takeobj('Destination (B)','Null',position,rotation,DestinationsBag)
-if selectedexpansion[2] == true then
-    position['y'] = 2
-    takeobj('Destination (P)','Null',position,rotation,DestinationsBag)
-    if selectedexodus[2] == false then
-        takeobj('Mining (P)','Null',position,rotation,DestinationsBag)
+    takeobj("Destination (B)", "Null", position, rotation, DestinationsBag)
+    if selectedexpansion[2] == true then
+        position["y"] = 2
+        takeobj("Destination (P)", "Null", position, rotation, DestinationsBag)
+        if selectedexodus[2] == false then
+            takeobj("Mining (P)", "Null", position, rotation, DestinationsBag)
+        end
+    end
+    if selectedexpansion[4] == true then
+        position["y"] = 3
+        takeobj("Destination (E)", "Null", position, rotation, DestinationsBag)
     end
 end
-if selectedexpansion[4] == true then
-    position['y'] = 3
-    takeobj('Destination (E)','Null',position,rotation,DestinationsBag)
-end
-
-end
-
-
-
-
-
-
 
 function BuildTPLTPE()
+    local position = {}
+    position["x"] = -8.7
+    position["y"] = 1
+    position["z"] = -20
+    local rotation = {180, 0, 0}
 
+    takeobj("Politics (B)", "Null", position, rotation, TPLTPEBag)
+    if selectedexpansion[2] == true then
+        position["y"] = 2
+        takeobj("IC (P)", "Null", position, rotation, TPLTPEBag)
+        position["y"] = 3
+        takeobj("Politics (P)", "Null", position, rotation, TPLTPEBag)
+    else
+        position["y"] = 2
+        takeobj("IC (B)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[3] == true then
+        position["y"] = 4
+        takeobj("Politics (D)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[4] == true then
+        position["y"] = 5
+        takeobj("Politics (E)", "Null", position, rotation, TPLTPEBag)
+    end
 
+    local position = {}
+    position["x"] = -3.85
+    position["y"] = 1
+    position["z"] = -20
+    local rotation = {180, 0, 0}
 
-local position = {}
-position['x'] = -8.7
-position['y'] = 1
-position['z'] = -20
-local rotation = {180 , 0,  0}
+    takeobj("Leadership (B)", "Null", position, rotation, TPLTPEBag)
+    if selectedexpansion[2] == true then
+        position["y"] = 2
+        takeobj("Leadership (P)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[3] == true then
+        position["y"] = 3
+        takeobj("Leadership (D)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[4] == true then
+        position["y"] = 4
+        takeobj("Leadership (E)", "Null", position, rotation, TPLTPEBag)
+    end
 
-takeobj('Politics (B)','Null',position,rotation,TPLTPEBag)
-if selectedexpansion[2] == true then
-    position['y'] = 2
-    takeobj('IC (P)','Null',position,rotation,TPLTPEBag)
-    position['y'] = 3
-    takeobj('Politics (P)','Null',position,rotation,TPLTPEBag)
-else
-    position['y'] = 2
-    takeobj('IC (B)','Null',position,rotation,TPLTPEBag)
+    local position = {}
+    position["x"] = 1
+    position["y"] = 1
+    position["z"] = -20
+    local rotation = {180, 0, 0}
+
+    takeobj("Tactics (B)", "Null", position, rotation, TPLTPEBag)
+    if selectedexpansion[2] == true then
+        position["y"] = 2
+        takeobj("Tactics (P)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[3] == true then
+        position["y"] = 3
+        takeobj("Tactics (D)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[4] == true then
+        position["y"] = 4
+        takeobj("Tactics (E)", "Null", position, rotation, TPLTPEBag)
+    end
+
+    local position = {}
+    position["x"] = 5.65
+    position["y"] = 1
+    position["z"] = -20
+    local rotation = {180, 0, 0}
+
+    takeobj("Piloting (B)", "Null", position, rotation, TPLTPEBag)
+    if selectedexpansion[2] == true then
+        position["y"] = 2
+        takeobj("Piloting (P)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[3] == true then
+        position["y"] = 3
+        takeobj("Piloting (D)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[4] == true then
+        position["y"] = 4
+        takeobj("Piloting (E)", "Null", position, rotation, TPLTPEBag)
+    end
+
+    local position = {}
+    position["x"] = 10.4
+    position["y"] = 1
+    position["z"] = -20
+    local rotation = {180, 0, 0}
+
+    takeobj("Engineering (B)", "Null", position, rotation, TPLTPEBag)
+    if selectedexpansion[2] == true then
+        position["y"] = 2
+        takeobj("Engineering (P)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[3] == true then
+        position["y"] = 3
+        takeobj("Engineering (D)", "Null", position, rotation, TPLTPEBag)
+    end
+    if selectedexpansion[4] == true then
+        position["y"] = 4
+        takeobj("Engineering (E)", "Null", position, rotation, TPLTPEBag)
+    end
+
+    local position = {}
+    position["x"] = -13.6
+    position["y"] = 1
+    position["z"] = -20
+    local rotation = {180, 0, 0}
+
+    if selectedexpansion[2] == true then
+        Title = "Treachery (P)"
+    end
+
+    if selectedexpansion[3] == true then
+        Title = "Treachery (D)"
+    end
+
+    takeobj(Title, "Null", position, rotation, TPLTPEBag)
 end
-if selectedexpansion[3] == true then
-    position['y'] = 4
-    takeobj('Politics (D)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[4] == true then
-    position['y'] = 5
-    takeobj('Politics (E)','Null',position,rotation,TPLTPEBag)
-end
-
-local position = {}
-position['x'] = -3.85
-position['y'] = 1
-position['z'] = -20
-local rotation = {180 , 0,  0}
-
-takeobj('Leadership (B)','Null',position,rotation,TPLTPEBag)
-if selectedexpansion[2] == true then
-    position['y'] = 2
-    takeobj('Leadership (P)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[3] == true then
-    position['y'] = 3
-    takeobj('Leadership (D)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[4] == true then
-    position['y'] = 4
-    takeobj('Leadership (E)','Null',position,rotation,TPLTPEBag)
-end
-
-local position = {}
-position['x'] = 1
-position['y'] = 1
-position['z'] = -20
-local rotation = {180 , 0,  0}
-
-takeobj('Tactics (B)','Null',position,rotation,TPLTPEBag)
-if selectedexpansion[2] == true then
-    position['y'] = 2
-    takeobj('Tactics (P)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[3] == true then
-    position['y'] = 3
-    takeobj('Tactics (D)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[4] == true then
-    position['y'] = 4
-    takeobj('Tactics (E)','Null',position,rotation,TPLTPEBag)
-end
-
-local position = {}
-position['x'] = 5.65
-position['y'] = 1
-position['z'] = -20
-local rotation = {180 , 0,  0}
-
-takeobj('Piloting (B)','Null',position,rotation,TPLTPEBag)
-if selectedexpansion[2] == true then
-    position['y'] = 2
-    takeobj('Piloting (P)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[3] == true then
-    position['y'] = 3
-    takeobj('Piloting (D)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[4] == true then
-    position['y'] = 4
-    takeobj('Piloting (E)','Null',position,rotation,TPLTPEBag)
-end
-
-local position = {}
-position['x'] = 10.4
-position['y'] = 1
-position['z'] = -20
-local rotation = {180 , 0,  0}
-
-takeobj('Engineering (B)','Null',position,rotation,TPLTPEBag)
-if selectedexpansion[2] == true then
-    position['y'] = 2
-    takeobj('Engineering (P)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[3] == true then
-    position['y'] = 3
-    takeobj('Engineering (D)','Null',position,rotation,TPLTPEBag)
-end
-if selectedexpansion[4] == true then
-    position['y'] = 4
-    takeobj('Engineering (E)','Null',position,rotation,TPLTPEBag)
-end
-
-local position = {}
-position['x'] = -13.6
-position['y'] = 1
-position['z'] = -20
-local rotation = {180 , 0,  0}
-
-if selectedexpansion[2] == true then
-        Title = 'Treachery (P)'
-end
-
-if selectedexpansion[3] == true then
-        Title = 'Treachery (D)'
-end
-
-takeobj(Title,'Null',position,rotation,TPLTPEBag)
-
-
-
-
-
-end
-
-
-
-
-
-
-
-
-
-
-
-
 
 function LoyaltyDeck()
-getObjectFromGUID(LoyaltyCylonBag).shuffle()
-getObjectFromGUID(LoyaltyHumanBag).shuffle()
-local specialcyloncard = false
+    getObjectFromGUID(LoyaltyCylonBag).shuffle()
+    getObjectFromGUID(LoyaltyHumanBag).shuffle()
+    local specialcyloncard = false
 
+    totalcards = 0
+    totalcylon = 0
 
-totalcards = 0
-totalcylon = 0
+    if selectedplayers == 3 then
+        totalcylon = 1
+        totalcards = 5
+    end
+    if selectedplayers == 4 then
+        totalcylon = 1
+        totalcards = 6
+        specialcyloncard = true
 
-if selectedplayers == 3 then
-    totalcylon = 1
-    totalcards = 5
-end
-if selectedplayers == 4 then
-    totalcylon = 1
-    totalcards = 6
-    specialcyloncard = true
-
-    if selectedexpansion[3] == true then
-        if Titles[4] == 0 then
-            specialcyloncard = false
-            totalcards = totalcards - 1
-        else
-            totalcards = totalcards + 1
+        if selectedexpansion[3] == true then
+            if Titles[4] == 0 then
+                specialcyloncard = false
+                totalcards = totalcards - 1
+            else
+                totalcards = totalcards + 1
+            end
         end
     end
-end
-if selectedplayers == 5 then
-    totalcylon = 2
-    totalcards = 8
-    if selectedexpansion[3] == true then
-        if Titles[4] == 0 then
-            specialcyloncard = false
-        else
-            specialcyloncard = true
-            totalcards = totalcards - 1
-            totalcylon = 1
+    if selectedplayers == 5 then
+        totalcylon = 2
+        totalcards = 8
+        if selectedexpansion[3] == true then
+            if Titles[4] == 0 then
+                specialcyloncard = false
+            else
+                specialcyloncard = true
+                totalcards = totalcards - 1
+                totalcylon = 1
+            end
         end
     end
-
-end
-if selectedplayers == 6 then
-    totalcylon = 2
-    totalcards = 9
-    specialcyloncard = true
-    if selectedexpansion[3] == true then
-        if Titles[4] == 0 then
-            specialcyloncard = false
-            totalcards = totalcards - 1
-        else
-            totalcards = totalcards + 1
+    if selectedplayers == 6 then
+        totalcylon = 2
+        totalcards = 9
+        specialcyloncard = true
+        if selectedexpansion[3] == true then
+            if Titles[4] == 0 then
+                specialcyloncard = false
+                totalcards = totalcards - 1
+            else
+                totalcards = totalcards + 1
+            end
         end
     end
-end
-if selectedplayers == 7 then
-    totalcylon = 2
-    totalcards = 10
-    specialcyloncard = true
-end
+    if selectedplayers == 7 then
+        totalcylon = 2
+        totalcards = 10
+        specialcyloncard = true
+    end
 
-if selectedexpansion[4] == true then
-    --for exodus
-    totalcards = totalcards + 1
-end
-
-for y, test in ipairs(Titles[1]) do
-    local data = test["Object"].getTable('Data')
-    if data["Character"] == 'Sharon "Boomer" Valerii' or data["Character"] == 'Gaius Baltar' then
+    if selectedexpansion[4] == true then
+        --for exodus
         totalcards = totalcards + 1
     end
-end
 
-
-
-takethese = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-takethose = {0,0,0,0,0}
-local position = {}
-position['x'] = 0
-position['y'] = 2
-position['z'] = 19
-local rotation = {180 , 0,  0}
-
-local params = {}
-params.position = position
-params.rotation = rotation
-params.index = 1
-params.callback_owner = Global
-
-cards = 0
-for i, object in ipairs(getObjectFromGUID(LoyaltyHumanBag).getObjects()) do
-    allow = false
-    if selectedexodus[3] == true and object.name == 'FinalFive' then
-        allow = true
-    end
-    if selectedexodus[4] == true and object.name == 'PersonalGoal' then
-        allow = true
-    end
-    if object.name == 'Card' then
-        allow = true
+    for y, test in ipairs(Titles[1]) do
+        local data = test["Object"].getTable("Data")
+        if data["Character"] == 'Sharon "Boomer" Valerii' or data["Character"] == "Gaius Baltar" then
+            totalcards = totalcards + 1
+        end
     end
 
-    if allow == true then
-        cards = cards + 1
-        takethese[cards] = object.guid
+    takethese = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    takethose = {0, 0, 0, 0, 0}
+    local position = {}
+    position["x"] = 0
+    position["y"] = 2
+    position["z"] = 19
+    local rotation = {180, 0, 0}
+
+    local params = {}
+    params.position = position
+    params.rotation = rotation
+    params.index = 1
+    params.callback_owner = Global
+
+    cards = 0
+    for i, object in ipairs(getObjectFromGUID(LoyaltyHumanBag).getObjects()) do
+        allow = false
+        if selectedexodus[3] == true and object.name == "FinalFive" then
+            allow = true
+        end
+        if selectedexodus[4] == true and object.name == "PersonalGoal" then
+            allow = true
+        end
+        if object.name == "Card" then
+            allow = true
+        end
+
+        if allow == true then
+            cards = cards + 1
+            takethese[cards] = object.guid
+        end
+
+        if cards == totalcards then
+            break
+        end
+    end
+    for i, card in ipairs(takethese) do
+        if card == 0 then
+            break
+        end
+        params.guid = card
+        getObjectFromGUID(LoyaltyHumanBag).takeObject(params)
     end
 
-    if cards == totalcards then
-        break
-    end
-end
-for i, card in ipairs(takethese) do
-    if card == 0 then
-        break
-    end
-    params.guid = card
-    getObjectFromGUID(LoyaltyHumanBag).takeObject(params)
-end
+    cards = 0
+    for i, object in ipairs(getObjectFromGUID(LoyaltyCylonBag).getObjects()) do
+        allow = false
+        if selectedexpansion[2] == true and object.name == "Pegasus" then
+            allow = true
+        end
+        if selectedexpansion[4] == true and object.name == "Exodus" then
+            allow = true
+        end
+        if object.name == "Card" then
+            allow = true
+        end
 
+        if allow == true then
+            cards = cards + 1
+            takethose[cards] = object.guid
+        end
 
-cards = 0
-for i, object in ipairs(getObjectFromGUID(LoyaltyCylonBag).getObjects()) do
-    allow = false
-    if selectedexpansion[2] == true and object.name == 'Pegasus' then
-        allow = true
+        if cards == totalcylon then
+            break
+        end
     end
-    if selectedexpansion[4] == true and object.name == 'Exodus' then
-        allow = true
-    end
-    if object.name == 'Card' then
-        allow = true
-    end
-
-    if allow == true then
-        cards = cards + 1
-        takethose[cards] = object.guid
+    for i, card in ipairs(takethose) do
+        if card == 0 then
+            break
+        end
+        params.guid = card
+        getObjectFromGUID(LoyaltyCylonBag).takeObject(params)
     end
 
-    if cards == totalcylon then
-        break
-    end
-end
-for i, card in ipairs(takethose) do
-    if card == 0 then
-        break
-    end
-    params.guid = card
-    getObjectFromGUID(LoyaltyCylonBag).takeObject(params)
-end
-
--- Eric Modification
-if selectedexpansion[3] == true then
-    local rotation = {180 , 0,  0}
-    position['x'] = 5.25
-    takeobj('MutinyCards','Null',position,rotation,TQMOBag)
-end
--- END Eric Modification
-
-if specialcyloncard == true then
-    Title = 'SympathizerCylon'
-    if selectedpegasus[2] == true then
-        Title = 'SympatheticCylon'
-    end
+    -- Eric Modification
     if selectedexpansion[3] == true then
-        -- local rotation = {180 , 0,  0}
-        Title = 'Mutineer'
+        local rotation = {180, 0, 0}
+        position["x"] = 5.25
+        takeobj("MutinyCards", "Null", position, rotation, TQMOBag)
+    end
+    -- END Eric Modification
+
+    if specialcyloncard == true then
+        Title = "SympathizerCylon"
+        if selectedpegasus[2] == true then
+            Title = "SympatheticCylon"
+        end
+        if selectedexpansion[3] == true then
+            -- local rotation = {180 , 0,  0}
+            Title = "Mutineer"
         -- position['x'] = 5.25
         -- takeobj('MutinyCards','Null',position,rotation,TQMOBag)
+        end
+        local rotation = {180, 0, 180}
+        position["x"] = 2.75
+        takeobj(Title, "Null", position, rotation, LoyaltySpecialBag)
     end
-    local rotation = {180 , 0,  180}
-    position['x'] = 2.75
-    takeobj(Title,'Null',position,rotation,LoyaltySpecialBag)
-
 end
 
-
-
-
-
-
-
-end
-
-
-
-
-
-function takeobj(Name,PlayerColor,pos,rot,bagguid,action)
+function takeobj(Name, PlayerColor, pos, rot, bagguid, action)
     bag = getObjectFromGUID(bagguid)
     for i, object in ipairs(bag.getObjects()) do
-        if object["name"] == Name  then
+        if object["name"] == Name then
             local params = {}
             params.position = pos
             params.rotation = rot
             params.guid = object["guid"]
-            if action == 'Lock' then
-                params.callback = 'lock'
-            elseif action == 'Shuffle' then
-                params.callback = 'shuffle'
-            elseif action == 'Tint' then
-                params.callback = 'setTintColor'
-            elseif action == 'Civs' then
-                params.callback = 'civs'
-            elseif action == 'Flip' then
-                params.callback = 'flip'
+            if action == "Lock" then
+                params.callback = "lock"
+            elseif action == "Shuffle" then
+                params.callback = "shuffle"
+            elseif action == "Tint" then
+                params.callback = "setTintColor"
+            elseif action == "Civs" then
+                params.callback = "civs"
+            elseif action == "Flip" then
+                params.callback = "flip"
             end
             params.callback_owner = Global
             local callback_params = {}
-            callback_params['color'] = PlayerColor
+            callback_params["color"] = PlayerColor
             params.params = callback_params
             bag.takeObject(params)
-            if action == 'Tint' then
+            if action == "Tint" then
                 return object["guid"]
             end
         end
@@ -1596,19 +1792,18 @@ function flip(object, params)
     object.flip()
 end
 
-
 function civs(object, params)
     object.shuffle()
-    params.position = {15,2,-3.6}
+    params.position = {15, 2, -3.6}
     params.callback_owner = Global
     params.index = 1
     object.takeObject(params)
-    params.position = {15,2,-7.6}
+    params.position = {15, 2, -7.6}
     object.takeObject(params)
 end
 
 function setTintColor(object, params)
-    object.setColorTint(stringColorToRGB(params['color']))
+    object.setColorTint(stringColorToRGB(params["color"]))
     object.scale(0.75)
 end
 
@@ -1617,111 +1812,95 @@ function onload()
     -- Name, Type, Ranking-(admiral,presdient,cag)location-(x,y,z),
     -- Colors-(T,P,L,T,P,E) 5/dual stats, expansion (1=base, 2=Pegasus, 3=Daybreak, 4=Exodus), dualcharater (t/f and name)
 
-
     NCharData = {}
-    NCharData['Laura Roslin'] = {'Polictical Leader',26,1,26,{-7,2.5,8.4},{0,3,2,0,0,0},1,{false, 0}}
-    NCharData['Gaius Baltar'] = {'Polictical Leader',23,2,23,{1.2,1.5,-3.8},{0,2,1,0,0,1},1,{true, 'Gaius "Support" Baltar'}}
-    NCharData['Tom Zarek'] = {'Polictical Leader',20,4,20,{-2.9,1.5,8.4},{0,2,2,1,0,0},1,{true, 'Tom "Military" Zarek'}}
-    NCharData['Ellen Tigh'] = {'Polictical Leader',21,7,21,{-1.3,1.5,-7.7},{1,2,2,0,0,0},2,{false, 0}}
-    NCharData['Tory Foster'] = {'Polictical Leader',25,6,24,{-10.5,1.5,8.4},{0,3,1,1,0,0},4,{false, 0}}
-    NCharData['Romo Lampkin'] = {'Polictical Leader',24,5,25,{-4.1,1.5,8.4},{0,3,0,2,0,0},3,{false, 0}}
-    NCharData['Lee Adama'] = {'Polictical Leader',19,3,8,{-1.3,1.5,-6.5},{0,5,5,1,2,0},3,{true, 'Lee "Apollo" Adama'}}
-    NCharData['William Adama'] = {'Military Leader',2,11,10,{-1.3,1.5,-9},{0,0,3,2,0,0},1,{false, 0}}
-    NCharData['Saul Tigh'] = {'Military Leader',3,22,12,{-5.0,1.5,-8.1},{0,0,2,3,0,0},1,{false, 0}}
-    NCharData['Karl Agathon'] = {'Military Leader',4,12,9,{8.4,1.5,-8.1},{0,0,2,2,1,0},1,{true, 'Karl "Helo" Agathon'}}
-    NCharData['Helena Cain'] = {'Military Leader',1,17,11,{-6.2,1.5,-8.1},{0,0,5,5,0,0},2,{false, 0}}
-    NCharData['Felix Gaeta'] = {'Military Leader',5,10,13,{-9.3,1.5,-5.9},{0,5,5,2,0,1},4,{false, 0}}
-    NCharData['Louis Hoshi'] = {'Military Leader',6,19,15,{-1.3,1.5,-3.8},{0,0,2,2,0,1},3,{false, 0}}
-    NCharData['Tom "Military" Zarek'] = {'Military Leader',7,9,16,{-5.6,1.5,-3.8},{0,2,2,1,0,0},3,{true, 'Tom Zarek'}}
-    NCharData['Lee "Apollo" Adama'] = {'Pilot',8,8,1,{10,1.5,-8.1},{0,5,5,1,2,0},1,{true, 'Lee Adama'}}
-    NCharData['Kara "Starbuck" Thrace'] = {'Pilot',11,25,2,{1.2,1.5,-6.9},{0,0,5,2,2,5},1,{false, 0}}
-    NCharData['Sharon "Boomer" Valerii'] = {'Pilot',13,21,5,{4.9,1.5,-5.9},{0,0,0,2,2,1},1,{false, 0}}
-    NCharData['Louanne "Kat" Katraine'] = {'Pilot',12,26,3,{1.2,1.5,-8.1},{0,0,1,2,2,0},2,{false, 0}}
-    NCharData['Samuel T. Anders'] = {'Pilot',15,24,7,{6.1,1.5,-5.9},{0,0,2,5,5,0},4,{false, 0}}
-    NCharData['Brendan "Hot Dog" Costanza'] = {'Pilot',14,23,6,{1.2,1.5,-9.3},{0,0,1,1,2,1},3,{false, 0}}
-    NCharData['Karl "Helo" Agathon'] = {'Pilot',10,20,4,{-2.5,1.5,-7.7},{0,0,2,2,1,0},3,{true, 'Karl Agathon'}}
-    NCharData['"Chief" Galen Tyrol'] = {'Support',16,13,17,{2.4,1.5,-6.9},{0,1,2,0,0,2},1,{false, 0}}
-    NCharData['Anastasia "Dee" Dualla'] = {'Support',9,18,14,{-2.5,1.5,-3.8},{0,0,1,3,0,1},2,{false, 0}}
-    NCharData['Callandra "Cally" Tyrol'] = {'Support',17,15,18,{2.4,1.5,-8.1},{0,1,1,1,0,2},4,{false, 0}}
-    NCharData['Sherman "Doc" Cottle'] = {'Support',18,16,19,{2.4,1.5,-3.8},{0,1,0,2,0,2},3,{false, 0}}
-    NCharData['Gaius "Support" Baltar'] = {'Support',22,14,22,{-2.5,1.5,-9},{0,2,2,0,0,1},3,{true, 'Gaius Baltar'}}
-    NCharData['Leoben Conoy'] = {'Cylon Leader',27,27,27,{6.5,1.5,8},{5,5,0,0,0,5},2,{false, 0}}
-    NCharData['Simon O"Neill'] = {'Cylon Leader',27,27,27,{4.1,1.5,8},{5,0,0,5,0,5},3,{false, 0}}
-    NCharData['"Caprica" Six'] = {'Cylon Leader',27,27,27,{1.7,1.5,8},{5,0,5,0,0,5},2,{false, 0}}
-    NCharData['Sharon "Athena" Agathon'] = {'Cylon Leader',27,27,27,{2.4,1.5,-9.3},{0,0,5,0,5,5},3,{false, 0}}
-    NCharData['Cavil'] = {'Cylon Leader',27,27,27,{4.1,1.5,8},{5,0,0,5,0,5},2,{false, 0}}
-    NCharData['D"Anna Biers'] = {'Cylon Leader',27,27,27,{6.5,1.5,8},{5,5,5,0,0,5},3,{false, 0}}
-    NCharData['Aaron Doral'] = {'Cylon Leader',27,27,27,{1.7,1.5,8},{5,5,0,5,0,0},3,{false, 0}}
+    NCharData["Laura Roslin"] = {"Political Leader", 26, 1, 26, {-7, 2.5, 8.4}, {0, 3, 2, 0, 0, 0}, 1, {false, 0}}
+    NCharData["Gaius Baltar"] = {"Political Leader", 23, 2, 23, {1.2, 1.5, -3.8}, {0, 2, 1, 0, 0, 1}, 1, {true, 'Gaius "Support" Baltar'}}
+    NCharData["Tom Zarek"] = {"Political Leader", 20, 4, 20, {-2.9, 1.5, 8.4}, {0, 2, 2, 1, 0, 0}, 1, {true, 'Tom "Military" Zarek'}}
+    NCharData["Ellen Tigh"] = {"Political Leader", 21, 7, 21, {-1.3, 1.5, -7.7}, {1, 2, 2, 0, 0, 0}, 2, {false, 0}}
+    NCharData["Tory Foster"] = {"Political Leader", 25, 6, 24, {-10.5, 1.5, 8.4}, {0, 3, 1, 1, 0, 0}, 4, {false, 0}}
+    NCharData["Romo Lampkin"] = {"Political Leader", 24, 5, 25, {-4.1, 1.5, 8.4}, {0, 3, 0, 2, 0, 0}, 3, {false, 0}}
+    NCharData["Lee Adama"] = {"Political Leader", 19, 3, 8, {-1.3, 1.5, -6.5}, {0, 5, 5, 1, 2, 0}, 3, {true, 'Lee "Apollo" Adama'}}
+    NCharData["William Adama"] = {"Military Leader", 2, 11, 10, {-1.3, 1.5, -9}, {0, 0, 3, 2, 0, 0}, 1, {false, 0}}
+    NCharData["Saul Tigh"] = {"Military Leader", 3, 22, 12, {-5.0, 1.5, -8.1}, {0, 0, 2, 3, 0, 0}, 1, {false, 0}}
+    NCharData["Karl Agathon"] = {"Military Leader", 4, 12, 9, {8.4, 1.5, -8.1}, {0, 0, 2, 2, 1, 0}, 1, {true, 'Karl "Helo" Agathon'}}
+    NCharData["Helena Cain"] = {"Military Leader", 1, 17, 11, {-6.2, 1.5, -8.1}, {0, 0, 5, 5, 0, 0}, 2, {false, 0}}
+    NCharData["Felix Gaeta"] = {"Military Leader", 5, 10, 13, {-9.3, 1.5, -5.9}, {0, 5, 5, 2, 0, 1}, 4, {false, 0}}
+    NCharData["Louis Hoshi"] = {"Military Leader", 6, 19, 15, {-1.3, 1.5, -3.8}, {0, 0, 2, 2, 0, 1}, 3, {false, 0}}
+    NCharData['Tom "Military" Zarek'] = {"Military Leader", 7, 9, 16, {-5.6, 1.5, -3.8}, {0, 2, 2, 1, 0, 0}, 3, {true, "Tom Zarek"}}
+    NCharData['Lee "Apollo" Adama'] = {"Pilot", 8, 8, 1, {10, 1.5, -8.1}, {0, 5, 5, 1, 2, 0}, 1, {true, "Lee Adama"}}
+    NCharData['Kara "Starbuck" Thrace'] = {"Pilot", 11, 25, 2, {1.2, 1.5, -6.9}, {0, 0, 5, 2, 2, 5}, 1, {false, 0}}
+    NCharData['Sharon "Boomer" Valerii'] = {"Pilot", 13, 21, 5, {4.9, 1.5, -5.9}, {0, 0, 0, 2, 2, 1}, 1, {false, 0}}
+    NCharData['Louanne "Kat" Katraine'] = {"Pilot", 12, 26, 3, {1.2, 1.5, -8.1}, {0, 0, 1, 2, 2, 0}, 2, {false, 0}}
+    NCharData["Samuel T. Anders"] = {"Pilot", 15, 24, 7, {6.1, 1.5, -5.9}, {0, 0, 2, 5, 5, 0}, 4, {false, 0}}
+    NCharData['Brendan "Hot Dog" Costanza'] = {"Pilot", 14, 23, 6, {1.2, 1.5, -9.3}, {0, 0, 1, 1, 2, 1}, 3, {false, 0}}
+    NCharData['Karl "Helo" Agathon'] = {"Pilot", 10, 20, 4, {-2.5, 1.5, -7.7}, {0, 0, 2, 2, 1, 0}, 3, {true, "Karl Agathon"}}
+    NCharData['"Chief" Galen Tyrol'] = {"Support", 16, 13, 17, {2.4, 1.5, -6.9}, {0, 1, 2, 0, 0, 2}, 1, {false, 0}}
+    NCharData['Anastasia "Dee" Dualla'] = {"Support", 9, 18, 14, {-2.5, 1.5, -3.8}, {0, 0, 1, 3, 0, 1}, 2, {false, 0}}
+    NCharData['Callandra "Cally" Tyrol'] = {"Support", 17, 15, 18, {2.4, 1.5, -8.1}, {0, 1, 1, 1, 0, 2}, 4, {false, 0}}
+    NCharData['Sherman "Doc" Cottle'] = {"Support", 18, 16, 19, {2.4, 1.5, -3.8}, {0, 1, 0, 2, 0, 2}, 3, {false, 0}}
+    NCharData['Gaius "Support" Baltar'] = {"Support", 22, 14, 22, {-2.5, 1.5, -9}, {0, 2, 2, 0, 0, 1}, 3, {true, "Gaius Baltar"}}
+    NCharData["Leoben Conoy"] = {"Cylon Leader", 27, 27, 27, {6.5, 1.5, 8}, {5, 5, 0, 0, 0, 5}, 2, {false, 0}}
+    NCharData['Simon O"Neill'] = {"Cylon Leader", 27, 27, 27, {4.1, 1.5, 8}, {5, 0, 0, 5, 0, 5}, 3, {false, 0}}
+    NCharData['"Caprica" Six'] = {"Cylon Leader", 27, 27, 27, {1.7, 1.5, 8}, {5, 0, 5, 0, 0, 5}, 2, {false, 0}}
+    NCharData['Sharon "Athena" Agathon'] = {"Cylon Leader", 27, 27, 27, {2.4, 1.5, -9.3}, {0, 0, 5, 0, 5, 5}, 3, {false, 0}}
+    NCharData["Cavil"] = {"Cylon Leader", 27, 27, 27, {4.1, 1.5, 8}, {5, 0, 0, 5, 0, 5}, 2, {false, 0}}
+    NCharData['D"Anna Biers'] = {"Cylon Leader", 27, 27, 27, {6.5, 1.5, 8}, {5, 5, 5, 0, 0, 5}, 3, {false, 0}}
+    NCharData["Aaron Doral"] = {"Cylon Leader", 27, 27, 27, {1.7, 1.5, 8}, {5, 5, 0, 5, 0, 0}, 3, {false, 0}}
 
-  --Stores all data for a player always on object as well
-  PlayerData = {}
-  --Coutner for number of players, number of non cylon players
-  PlayerCounter = {0, 0, 0}
-  -- true host only .. false all
-  LockType = false
-  -- true broadcast all, false printtoall
-  BroadCastMessage = false
-  isCylonLeader = false
-  selectedplayers = 0
-  Titles = {{}, {}, {}, 0}
-  TQMOBag = '1b460b' -- Title cards, Quorum cards, Mutiny Cards, (Agenda?) cards
-  TokenBag = '8769f3'
-  LocationsBag = '2ddbff'
-  LoyaltyCylonBag = '861938'
-  LoyaltyHumanBag = 'd12fc6'
-  LoyaltySpecialBag = 'e00db3'
-  ExtraLoyaltyCards = 0
-  TPLTPEBag = '99659a' -- These are the treachery, politics, leadership, tactics, piloting, engineering cards
-  DestinationsBag = '028b53'
-  CrisisCardsBag = '501808'
-  SupercrisisCardsBag = '4c5dfc'
-  Menu = '5e3f9f'
-  ExtrasBag = '724f1b'
-  CrisisBoard = '34274e'
-  characterboard = '8ac057'
-  bigcardsboard = '668860'
-  smallsideboard = '8992e9'
-  unusedcards = '4ee9fa'
-  extrahumancards = '730cca'
-  --delete when done
-  TestingObject = '70e517'
-  EndSetup = false
+    --Stores all data for a player always on object as well
+    PlayerData = {}
+    --Coutner for number of players, number of non cylon players
+    PlayerCounter = {0, 0, 0}
+    -- true host only .. false all
+    LockType = false
+    -- true broadcast all, false printtoall
+    BroadCastMessage = false
+    isCylonLeader = false
+    selectedplayers = 0
+    Titles = {{}, {}, {}, 0}
+    TQMOBag = "1b460b" -- Title cards, Quorum cards, Mutiny Cards, (Agenda?) cards
+    TokenBag = "8769f3"
+    LocationsBag = "2ddbff"
+    LoyaltyCylonBag = "861938"
+    LoyaltyHumanBag = "d12fc6"
+    LoyaltySpecialBag = "e00db3"
+    ExtraLoyaltyCards = 0
+    TPLTPEBag = "99659a" -- These are the treachery, politics, leadership, tactics, piloting, engineering cards
+    DestinationsBag = "028b53"
+    CrisisCardsBag = "501808"
+    SupercrisisCardsBag = "4c5dfc"
+    Menu = "5e3f9f"
+    ExtrasBag = "724f1b"
+    CrisisBoard = "34274e"
+    characterboard = "8ac057"
+    bigcardsboard = "668860"
+    smallsideboard = "8992e9"
+    unusedcards = "4ee9fa"
+    extrahumancards = "730cca"
+    --delete when done
+    TestingObject = "70e517"
+    EndSetup = false
 
+    getObjectFromGUID(TQMOBag).interactable = false
+    getObjectFromGUID(LocationsBag).interactable = false
+    getObjectFromGUID(LoyaltyCylonBag).interactable = false
+    getObjectFromGUID(LoyaltyHumanBag).interactable = false
+    getObjectFromGUID(LoyaltySpecialBag).interactable = false
+    getObjectFromGUID(TPLTPEBag).interactable = false
+    getObjectFromGUID(DestinationsBag).interactable = false
+    getObjectFromGUID(CrisisCardsBag).interactable = false
+    getObjectFromGUID(SupercrisisCardsBag).interactable = false
+    getObjectFromGUID(ExtrasBag).interactable = false
+    getObjectFromGUID(TokenBag).interactable = false
+    getObjectFromGUID(CrisisBoard).interactable = false
 
-
-  getObjectFromGUID(TQMOBag).interactable = false
-  getObjectFromGUID(LocationsBag).interactable = false
-  getObjectFromGUID(LoyaltyCylonBag).interactable = false
-  getObjectFromGUID(LoyaltyHumanBag).interactable = false
-  getObjectFromGUID(LoyaltySpecialBag).interactable = false
-  getObjectFromGUID(TPLTPEBag).interactable = false
-  getObjectFromGUID(DestinationsBag).interactable = false
-  getObjectFromGUID(CrisisCardsBag).interactable = false
-  getObjectFromGUID(SupercrisisCardsBag).interactable = false
-  getObjectFromGUID(ExtrasBag).interactable = false
-  getObjectFromGUID(TokenBag).interactable = false
-  getObjectFromGUID(CrisisBoard).interactable = false
-
-  getObjectFromGUID(extrahumancards).interactable = false
-  getObjectFromGUID(characterboard).interactable = false
-  getObjectFromGUID(bigcardsboard).interactable = false
-  getObjectFromGUID(smallsideboard).interactable = false
-
-
-
-
+    getObjectFromGUID(extrahumancards).interactable = false
+    getObjectFromGUID(characterboard).interactable = false
+    getObjectFromGUID(bigcardsboard).interactable = false
+    getObjectFromGUID(smallsideboard).interactable = false
 
     getObjectFromGUID(unusedcards).interactable = false
---    getObjectFromGUID(Menu).interactable = false
-
-
-
-
-
-
-
-
-
+    --    getObjectFromGUID(Menu).interactable = false
 end
 
 function FindButton(object, c_function)
@@ -1735,45 +1914,50 @@ function FindButton(object, c_function)
     return Buttons, index
 end
 
-
 function FlipText(object, c_function, label)
     local button_parameters = {}
     local button, index = FindButton(object, c_function)
-    local _, found = string.find(button[index + 1].label, '[X]')
+    local _, found = string.find(button[index + 1].label, "[X]")
     button_parameters.index = index
     if found == nil then
-        button_parameters.label = '[X] ' .. label
+        button_parameters.label = "[X] " .. label
         object.editButton(button_parameters)
         return true
     else
-        button_parameters.label = '[ ] ' .. label
+        button_parameters.label = "[ ] " .. label
         object.editButton(button_parameters)
         return false
     end
 end
 
-
 function GenerateCharaterButtons()
     for i, object in ipairs(getAllObjects()) do
-        if object.tag == 'Generic' and object.name == 'Custom_Model' and object.getDescription() ~= '' then
-            object.createButton({label = object.getName(), click_function = 'CardButton', rotation = {0, 0, 0},
-                                position = {0, 0.4, -3}, width = 4000, height = 550, font_size = 300})
+        if object.tag == "Generic" and object.name == "Custom_Model" and object.getDescription() ~= "" then
+            object.createButton(
+                {
+                    label = object.getName(),
+                    click_function = "CardButton",
+                    rotation = {0, 0, 0},
+                    position = {0, 0.4, -3},
+                    width = 4000,
+                    height = 550,
+                    font_size = 300
+                }
+            )
 
-            object.setVar('locked',false)
-            object.setVar('picked',false)
+            object.setVar("locked", false)
+            object.setVar("picked", false)
 
             if selectedexpansion[NCharData[object.getName()][7]] == false then
                 object.destruct()
             else
-                if selectedplayers < 4 and object.getDescription() == 'Cylon Leader' then
+                if selectedplayers < 4 and object.getDescription() == "Cylon Leader" then
                     object.destruct()
                 end
             end
-
         end
     end
 end
-
 
 function Characters(counter, type, name)
     --counter = (non cylon/support counter, totalplayers), type and charter name, playercolor
@@ -1781,39 +1965,38 @@ function Characters(counter, type, name)
         name = NCharData[name][8][2]
     end
     for i, object in ipairs(getAllObjects()) do
-        if object.tag == 'Generic' and object.name == 'Custom_Model' then
-            if counter[2] == 3 and object.getDescription() ~= 'Cylon Leader' then
-                object.setVar('locked',false)
+        if object.tag == "Generic" and object.name == "Custom_Model" then
+            if counter[2] == 3 and object.getDescription() ~= "Cylon Leader" then
+                object.setVar("locked", false)
             end
-            if counter[2] ~= 3 and type ~= 'Support' then
+            if counter[2] ~= 3 and type ~= "Support" then
                 if object.getDescription() == type then
-                    object.setVar('locked',true)
+                    object.setVar("locked", true)
                 end
             end
             if name == object.getName() then
                 object.removeButton(0)
             end
-            if counter[1] == selectedplayers and object.getVar('picked') == false then
+            if counter[1] == selectedplayers and object.getVar("picked") == false then
                 -- x  = 18.23 , y = 33.08
                 --WORKING
                 if EndSetup == false then
                     EndSetup = true
-                    getObjectFromGUID(unusedcards).setPosition({0,1,22.5})
+                    getObjectFromGUID(unusedcards).setPosition({0, 1, 22.5})
                     getObjectFromGUID(unusedcards).interactable = true
                 end
                 object.unlock()
-                object.setPositionSmooth({0,3,22.5})
+                object.setPositionSmooth({0, 3, 22.5})
             end
         end
     end
 end
 
 function CardButton(object, playerColor)
-
-    if object.getVar('locked') == false then
+    if object.getVar("locked") == false then
         PlayerCounter[1] = PlayerCounter[1] + 1
         object.removeButton(0)
-        object.setVar('picked',true)
+        object.setVar("picked", true)
         local ctable = {}
         ctable["GUID"] = object.getGUID()
         ctable["Token"] = 0
@@ -1824,112 +2007,119 @@ function CardButton(object, playerColor)
         ctable["Type"] = object.getDescription()
         ctable["Hand"] = Player[playerColor].getPlayerHand()
 
-
-
         for i, data in pairs(NCharData) do
             if i == object.getName() then
-                ctable["Ranking"] = {data[2],data[3],data[4]}
+                ctable["Ranking"] = {data[2], data[3], data[4]}
                 ctable["Location"] = data[5]
                 ctable["DrawColors"] = data[6]
             end
         end
-        object.setTable('Data', ctable)
+        object.setTable("Data", ctable)
         object.lock()
         object.setPosition(HandPositionObject(ctable, 5, 0, 5, 0))
-        object.setRotation({ctable["Hand"]['rot_x'], ctable["Hand"]['rot_y'] + 180, ctable["Hand"]['rot_z']})
+        object.setRotation({ctable["Hand"]["rot_x"], ctable["Hand"]["rot_y"] + 180, ctable["Hand"]["rot_z"]})
         object.scale(2)
-        if ctable["Type"] ~= 'Cylon Leader' and ctable["Type"] ~= 'Support' then
+        if ctable["Type"] ~= "Cylon Leader" and ctable["Type"] ~= "Support" then
             PlayerCounter[2] = PlayerCounter[2] + 1
         end
-        Characters(PlayerCounter,ctable["Type"],ctable["Character"])
+        Characters(PlayerCounter, ctable["Type"], ctable["Character"])
         spawndrawcards(object)
         Succession(object, EndSetup)
         Notes(ctable["PlayerColor"], ctable["Character"], ctable["Type"])
     else
-        sendMessage(Player[playerColor].steam_name ..  ' cannot pick another ' .. object.getDescription() .. ' at this time.', 'Black')
+        sendMessage(
+            Player[playerColor].steam_name .. " cannot pick another " .. object.getDescription() .. " at this time.",
+            "Black"
+        )
     end
 end
 
 function onObjectDropped(playerColor, object)
-    if object.tag == 'Generic' and object.name == 'Custom_Model' and object.getDescription() ~= '' and object.getVar('picked') == nil then
-            object.createButton({label = object.getName(), click_function = 'CardButton', rotation = {0, 0, 0},
-                                position = {0, 0.4, -3}, width = 4000, height = 550, font_size = 300})
-            object.setVar('locked',false)
-            object.setVar('picked',false)
-            object.setVar('excute',true)
+    if
+        object.tag == "Generic" and object.name == "Custom_Model" and object.getDescription() ~= "" and
+            object.getVar("picked") == nil
+     then
+        object.createButton(
+            {
+                label = object.getName(),
+                click_function = "CardButton",
+                rotation = {0, 0, 0},
+                position = {0, 0.4, -3},
+                width = 4000,
+                height = 550,
+                font_size = 300
+            }
+        )
+        object.setVar("locked", false)
+        object.setVar("picked", false)
+        object.setVar("excute", true)
     end
 end
 
 function Timer4(params)
     if timer4 == true then
-        local button, index = FindButton(params.object, 'Execute')
-        params.object.editButton({index = index, label = 'Execute', click_function = 'Execute'})
+        local button, index = FindButton(params.object, "Execute")
+        params.object.editButton({index = index, label = "Execute", click_function = "Execute"})
         timer4 = nil
     end
 end
 
-
-
 function Execute(object, playerColor)
---things to do.. remove data from object
---remove charater from succession list
---remove all Buttons
---check if player who owns charatter clicked on button don't I have this already?
---WORKING
+    --things to do.. remove data from object
+    --remove charater from succession list
+    --remove all Buttons
+    --check if player who owns charatter clicked on button don't I have this already?
+    --WORKING
 
-
-
-
-
-
-
-if timer4 == true then
-    timer4 = nil
-    local data = object.getTable('Data')
-    if data["PlayerColor"] == playerColor then
-        if #Player[playerColor].getHandObjects() == 0 then
-            for i=1,3,1 do
-                for y, test in ipairs(Titles[i]) do
-                    local data2 = test["Object"].getTable('Data')
-                    if data2["Character"] == data["Character"] then
-                        table.remove(Titles[i], y)
-                        break
+    if timer4 == true then
+        timer4 = nil
+        local data = object.getTable("Data")
+        if data["PlayerColor"] == playerColor then
+            if #Player[playerColor].getHandObjects() == 0 then
+                --    object.clearButtons()
+                --    object.scale(0.5)
+                --    object.setTable('Data', nil)
+                --    object.setVar('picked',false)
+                --    object.setVar('locked',false)
+                --    object.unlock()
+                for i = 1, 3, 1 do
+                    for y, test in ipairs(Titles[i]) do
+                        local data2 = test["Object"].getTable("Data")
+                        if data2["Character"] == data["Character"] then
+                            table.remove(Titles[i], y)
+                            break
                         --Titles[i][y] = nil
+                        end
                     end
                 end
+                getObjectFromGUID(data["Token"]).destruct()
+                object.destruct()
+            else
+                local button, index = FindButton(object, "Execute")
+                object.editButton({index = index, label = "Execute", click_function = "Execute"})
+                sendMessage(
+                    "Please make sure your hand is completely empty before excuting and picking a new character.",
+                    playerColor
+                )
             end
-            getObjectFromGUID(data["Token"]).destruct()
-            object.destruct()
-        --    object.clearButtons()
-        --    object.scale(0.5)
-        --    object.setTable('Data', nil)
-        --    object.setVar('picked',false)
-        --    object.setVar('locked',false)
-        --    object.unlock()
-        else
-            local button, index = FindButton(object, 'Execute')
-            object.editButton({index = index, label = 'Execute', click_function = 'Execute'})
-            sendMessage('Please make sure your hand is completely empty before excuting and picking a new character.', playerColor)
         end
+        return
     end
-    return
+    if timer4 == nil then
+        local button, index = FindButton(object, "Execute")
+        object.editButton({index = index, label = "OK?", click_function = "Execute"})
+        params = {}
+        params.object = object
+        params.color = playerColor
+        Timer.create({identifier = "t4", function_name = "Timer4", parameters = params, delay = 1})
+        timer4 = true
+        return
+    end
 end
-if timer4 == nil then
-    local button, index = FindButton(object, 'Execute')
-    object.editButton({index = index, label = 'OK?', click_function = 'Execute'})
-    params = {}
-    params.object = object
-    params.color = playerColor
-    Timer.create({identifier = 't4', function_name = 'Timer4', parameters = params, delay = 1})
-    timer4 = true
-    return
-end
-end
-
 
 -- object = Character card, setup = boolean true if setup was completed
 function Succession(object, setup)
-    local data = object.getTable('Data')
+    local data = object.getTable("Data")
     local t = {"Admiral", "President", "Cag"}
 
     local Ranking = {}
@@ -1941,89 +2131,94 @@ function Succession(object, setup)
     Ranking["President"] = data["Ranking"][2]
     Ranking["Cag"] = data["Ranking"][3]
 
-    for i=1,3,1 do
+    for i = 1, 3, 1 do
         table.insert(Titles[i], Ranking)
-        table.sort(Titles[i], function(a,b) return a[t[i]] < b[t[i]] end)
+        table.sort(
+            Titles[i],
+            function(a, b)
+                return a[t[i]] < b[t[i]]
+            end
+        )
     end
-    if data["Type"] == 'Cylon Leader' then
+    if data["Type"] == "Cylon Leader" then
         Titles[4] = Ranking
     end
     if setup == true then
         BuildAPC()
     end
 
-    if object.getVar('excute') == true then
-        data["Token"] = takeobj(data["Character"],data["PlayerColor"],data["Location"],{0,0,0},TokenBag,'Tint')
-        object.setTable('Data', data)
+    if object.getVar("excute") == true then
+        data["Token"] = takeobj(data["Character"], data["PlayerColor"], data["Location"], {0, 0, 0}, TokenBag, "Tint")
+        object.setTable("Data", data)
     end
 end
 
 -- Admiral, President, CAG
 function BuildAPC()
-    if PlayerCounter[1] ~= selectedplayers then return end
+    if PlayerCounter[1] ~= selectedplayers then
+        return
+    end
 
-    local Title = 'Admiral (B)'
+    local Title = "Admiral (B)"
     if selectedpegasus[1] == true then
-        Title = 'Admiral (P)'
+        Title = "Admiral (P)"
     else
         if selectedexodus[2] == true then
-            Title = 'Admiral (E)'
+            Title = "Admiral (E)"
         end
     end
 
-    local data = Titles[1][1]["Object"].getTable('Data')
+    local data = Titles[1][1]["Object"].getTable("Data")
 
-    local rotation = {data["Hand"]['rot_x'], data["Hand"]['rot_y'] + 180, data["Hand"]['rot_z']}
+    local rotation = {data["Hand"]["rot_x"], data["Hand"]["rot_y"] + 180, data["Hand"]["rot_z"]}
     local position = HandPositionObject(data, 10, 3, 10, 3)
-    takeobj(Title,data["PlayerColor"],position,rotation,TQMOBag)
+    takeobj(Title, data["PlayerColor"], position, rotation, TQMOBag)
     position = HandPositionObject(data, 10, 6, 10, 6)
-    takeobj('Nuke1',data["PlayerColor"],position,rotation,TQMOBag)
+    takeobj("Nuke1", data["PlayerColor"], position, rotation, TQMOBag)
     position = HandPositionObject(data, 10, 8, 10, 8)
-    takeobj('Nuke2',data["PlayerColor"],position,rotation,TQMOBag)
+    takeobj("Nuke2", data["PlayerColor"], position, rotation, TQMOBag)
 
-    Title = 'President (B)'
+    Title = "President (B)"
     if selectedpegasus[1] == true then
-        Title = 'President (P)'
+        Title = "President (P)"
     end
 
+    data = Titles[2][1]["Object"].getTable("Data")
 
-    data = Titles[2][1]["Object"].getTable('Data')
-
-    rotation = {data["Hand"]['rot_x'], data["Hand"]['rot_y'] + 180, data["Hand"]['rot_z']}
+    rotation = {data["Hand"]["rot_x"], data["Hand"]["rot_y"] + 180, data["Hand"]["rot_z"]}
     position = HandPositionObject(data, 10, -3, 10, -3)
-    takeobj(Title,data["PlayerColor"],position,rotation,TQMOBag)
+    takeobj(Title, data["PlayerColor"], position, rotation, TQMOBag)
     position = HandPositionObject(data, 10, -6, 10, -6)
-    takeobj('Quorum (B)',data["PlayerColor"],position,rotation,TQMOBag,'Flip')
+    takeobj("Quorum (B)", data["PlayerColor"], position, rotation, TQMOBag, "Flip")
     if selectedexpansion[2] == true then
-        takeobj('Quorum (P)',data["PlayerColor"],position,rotation,TQMOBag,'Flip')
+        takeobj("Quorum (P)", data["PlayerColor"], position, rotation, TQMOBag, "Flip")
     end
     if selectedexpansion[4] == true then
-        takeobj('Quorum (E)',data["PlayerColor"],position,rotation,TQMOBag,'Flip')
+        takeobj("Quorum (E)", data["PlayerColor"], position, rotation, TQMOBag, "Flip")
     end
 
-
     if selectedexodus[2] == true then
-        data = Titles[3][1]["Object"].getTable('Data')
-        rotation = {data["Hand"]['rot_x'], data["Hand"]['rot_y'] + 180, data["Hand"]['rot_z']}
+        data = Titles[3][1]["Object"].getTable("Data")
+        rotation = {data["Hand"]["rot_x"], data["Hand"]["rot_y"] + 180, data["Hand"]["rot_z"]}
         position = HandPositionObject(data, 10, 0, 10, 0)
-        takeobj('CAG',data["PlayerColor"],position,rotation,TQMOBag)
+        takeobj("CAG", data["PlayerColor"], position, rotation, TQMOBag)
     end
 
     if Titles[4] ~= 0 then
-        data = Titles[4]["Object"].getTable('Data')
+        data = Titles[4]["Object"].getTable("Data")
 
         position = HandPositionObject(data, 10, 0, 10, 0)
-        takeobj('Infiltration',data["PlayerColor"],position,rotation,TQMOBag)
+        takeobj("Infiltration", data["PlayerColor"], position, rotation, TQMOBag)
         position = HandPositionObject(data, 10, 3, 10, 3)
-        Title = 'CylonMotives'
+        Title = "CylonMotives"
         if selectedpegasus[3] == false and selectedexpansion[3] == false then
             if selectedplayers == 4 or selectedplayers == 6 then
-                Title = 'SympatheticAgenda'
+                Title = "SympatheticAgenda"
             else
-                Title = 'HostileAgenda'
+                Title = "HostileAgenda"
             end
         end
-        takeobj(Title,data["PlayerColor"],position,rotation,TQMOBag,'Flip')
+        takeobj(Title, data["PlayerColor"], position, rotation, TQMOBag, "Flip")
     end
 
     getObjectFromGUID(characterboard).destruct()
@@ -2036,40 +2231,34 @@ function BuildAPC()
     changeimg()
     spawnships()
     spawncharacters()
---    ShuffleAll()
-
+    --    ShuffleAll()
 
     params = {}
-    sendMessage('Will shuffle all decks in about 10 seconds, please wait', 'Black')
-    Timer.create({identifier = 't3', function_name = 'ShuffleAll', parameters = params, delay = 10})
-
+    sendMessage("Will shuffle all decks in about 10 seconds, please wait", "Black")
+    Timer.create({identifier = "t3", function_name = "ShuffleAll", parameters = params, delay = 10})
 
     currentplayer = 1
     counter = 0
-    CrisisBoardt = {['click_function'] = 'CrisisBoardtest', ['label'] = 'Spawn Crisis Board', ['position'] = {0, 0.6, 0}, ['rotation'] =  {0, 180, 0}, ['width'] = 4500, ['height'] = 500, ['font_size'] = 350}
+    CrisisBoardt = {
+        ["click_function"] = "CrisisBoardtest",
+        ["label"] = "Spawn Crisis Board",
+        ["position"] = {0, 0.6, 0},
+        ["rotation"] = {0, 180, 0},
+        ["width"] = 4500,
+        ["height"] = 500,
+        ["font_size"] = 350
+    }
     getObjectFromGUID(TestingObject).createButton(CrisisBoardt)
-
 end
 
 function spawncharacters()
     for y, test in ipairs(Titles[1]) do
         --WORKING
-        local data = test["Object"].getTable('Data')
-        data["Token"] = takeobj(data["Character"],data["PlayerColor"],data["Location"],{0,0,0},TokenBag,'Tint')
-        test["Object"].setTable('Data', data)
+        local data = test["Object"].getTable("Data")
+        data["Token"] = takeobj(data["Character"], data["PlayerColor"], data["Location"], {0, 0, 0}, TokenBag, "Tint")
+        test["Object"].setTable("Data", data)
     end
 end
-
-
-
-
-
-
-
-
-
-
-
 
 function sendMessage(text, playerColor)
     if BroadCastMessage == false then
@@ -2091,30 +2280,24 @@ function HostLock(playerColor)
     end
 end
 
-
-
-
-
-
-
 function rgbToHex(rgb)
     -- converts red/green/blue to hex for tinting
-	local hexadecimal = ''
-	for key, value in ipairs(rgb) do
+    local hexadecimal = ""
+    for key, value in ipairs(rgb) do
         value = math.ceil(value * 255)
-        local hex = ''
-		while (value > 0) do
+        local hex = ""
+        while (value > 0) do
             local index = (value % 16) + 1
             value = math.floor(value / 16)
-			hex = string.sub('0123456789ABCDEF', index, index) .. hex
-		end
-		if string.len(hex) == 0 then
-			hex = '00'
-		elseif string.len(hex) == 1 then
-			hex = '0' .. hex
-		end
-		hexadecimal = hexadecimal .. hex
-	end
+            hex = string.sub("0123456789ABCDEF", index, index) .. hex
+        end
+        if string.len(hex) == 0 then
+            hex = "00"
+        elseif string.len(hex) == 1 then
+            hex = "0" .. hex
+        end
+        hexadecimal = hexadecimal .. hex
+    end
     return hexadecimal
 end
 
@@ -2124,9 +2307,13 @@ function HandPosition(Key, xD1, xD2, zD1, zD2)
     -- xD1 and zD1 offset for up or down location
     -- xD2 and zD2 offset for left or right location
     local HPos = {}
-    HPos[1] = PlayerData[Key]["Hand"]['pos_x'] + PlayerData[Key]["Hand"]['trigger_forward_x'] * xD1 + PlayerData[Key]["Hand"]['trigger_right_x'] * xD2
-    HPos[2] = PlayerData[Key]["Hand"]['pos_y']
-    HPos[3] = PlayerData[Key]["Hand"]['pos_z'] + PlayerData[Key]["Hand"]['trigger_forward_z'] * zD1 + PlayerData[Key]["Hand"]['trigger_right_z'] * zD2
+    HPos[1] =
+        PlayerData[Key]["Hand"]["pos_x"] + PlayerData[Key]["Hand"]["trigger_forward_x"] * xD1 +
+        PlayerData[Key]["Hand"]["trigger_right_x"] * xD2
+    HPos[2] = PlayerData[Key]["Hand"]["pos_y"]
+    HPos[3] =
+        PlayerData[Key]["Hand"]["pos_z"] + PlayerData[Key]["Hand"]["trigger_forward_z"] * zD1 +
+        PlayerData[Key]["Hand"]["trigger_right_z"] * zD2
     return HPos
 end
 
@@ -2135,15 +2322,18 @@ function HandPositionObject(Data, xD1, xD2, zD1, zD2)
     -- xD1 and zD1 offset for up or down location
     -- xD2 and zD2 offset for left or right location
     local HPos = {}
-    HPos[1] = Data["Hand"]['pos_x'] + Data["Hand"]['trigger_forward_x'] * xD1 + Data["Hand"]['trigger_right_x'] * xD2
-    HPos[2] = Data["Hand"]['pos_y']
-    HPos[3] = Data["Hand"]['pos_z'] + Data["Hand"]['trigger_forward_z'] * zD1 + Data["Hand"]['trigger_right_z'] * zD2
+    HPos[1] = Data["Hand"]["pos_x"] + Data["Hand"]["trigger_forward_x"] * xD1 + Data["Hand"]["trigger_right_x"] * xD2
+    HPos[2] = Data["Hand"]["pos_y"]
+    HPos[3] = Data["Hand"]["pos_z"] + Data["Hand"]["trigger_forward_z"] * zD1 + Data["Hand"]["trigger_right_z"] * zD2
     return HPos
 end
 
 function Notes(playerColor, Character, Type)
     local note = getNotes()
-    local msg = '[' .. rgbToHex(stringColorToRGB(playerColor)) .. ']' .. Player[playerColor].steam_name .. ' = ' .. Character .. ' (' .. Type .. ')[-]\n'
+    local msg =
+        "[" ..
+        rgbToHex(stringColorToRGB(playerColor)) ..
+            "]" .. Player[playerColor].steam_name .. " = " .. Character .. " (" .. Type .. ")[-]\n"
     note = note .. msg
     setNotes(note)
 end
