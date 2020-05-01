@@ -828,7 +828,7 @@ function Population()
 end
 
 
-function IncreaseFood(object, playerColor))
+function IncreaseFood(object, playerColor)
     if HostLock(playerColor) == false then return end
     foodcount = foodcount + 1
     if foodcount > 15 then
@@ -836,7 +836,7 @@ function IncreaseFood(object, playerColor))
     end
     updateDisplay(object,FoodDisplay,foodcount, playerColor)
 end
-function DecreaseFood(object, playerColor))
+function DecreaseFood(object, playerColor)
     if HostLock(playerColor) == false then return end
     foodcount = foodcount - 1
     if foodcount < 0 then
@@ -845,7 +845,7 @@ function DecreaseFood(object, playerColor))
     updateDisplay(object,FoodDisplay,foodcount, playerColor)
 end
 
-function IncreaseFuel(object, playerColor))
+function IncreaseFuel(object, playerColor)
     if HostLock(playerColor) == false then return end
     fuelcount = fuelcount + 1
     if fuelcount > 15 then
@@ -853,7 +853,7 @@ function IncreaseFuel(object, playerColor))
     end
     updateDisplay(object,FuelDisplay,fuelcount, playerColor)
 end
-function DecreaseFuel(object, playerColor))
+function DecreaseFuel(object, playerColor)
     if HostLock(playerColor) == false then return end
     fuelcount = fuelcount - 1
     if fuelcount < 0 then
@@ -861,7 +861,7 @@ function DecreaseFuel(object, playerColor))
     end
     updateDisplay(object,FuelDisplay,fuelcount, playerColor)
 end
-function IncreasePopulation(object, playerColor))
+function IncreasePopulation(object, playerColor)
     if HostLock(playerColor) == false then return end
     populationcount = populationcount + 1
     if populationcount > 15 then
@@ -869,7 +869,7 @@ function IncreasePopulation(object, playerColor))
     end
     updateDisplay(object,PopulationDisplay,populationcount, playerColor)
 end
-function DecreasePopulation(object, playerColor))
+function DecreasePopulation(object, playerColor)
     if HostLock(playerColor) == false then return end
     populationcount = populationcount - 1
     if populationcount < 0 then
