@@ -11,8 +11,11 @@ currentplayer = integer representing the index of the players
 counter = integer. (Used for iterating through the players?)
 Count = global variable that should be local. Used to determine how many cards are put on the crisis board
 selectedplayers = ???
+PlayerCounter = Combined Counter for number of players, number of non-cylon players, number of non-support / non-cylon leader players (for determining what classes are 'locked')
 
 It seems like all the data is being 'stored' in the character cards.
+
+NCharData = constant data representing the content of each character card
 
 Titles[1] = list of Tables
    - object["Data"] = Table
@@ -20,10 +23,68 @@ Titles[1] = list of Tables
       - object["Data"]["PlayerColor"] = color of the player
       - object["Data"]["Hand"] = Hand Table?
 
-Titles[1] = ???
-Titles[4] = Cylon Leader
+Titles[1] = Admiral Ranking
+Titles[2] = President Ranking
+Titles[3] = CAG ranking
+Titles[4] = Cylon Leader ranking
+
+Whenever you see a for loop like this:
+`for y, test in ipairs(Titles[1]) do`
+it's basically just relying on the fact that *everyone* has a character in the
+    Admiral ranking, so it's really just iterating through the character Cards
+    in admiral ranking order
 
 Calling Succession function passes EndSetup, which is a boolean to indicate whether or not setup has completed.
+However, the PrintSuccession button (which is what happens when you press the 's' on the game board) only prints the
+  line of succession to a log. It does not move any cards or decks around.
+
+
+GenerateCharaterButtons is spelled incorrectly
+
+
+------------------------------
+Data flow:
+
+1. selecting the final 'next' button calls 'save' with the game configuration data
+2. save calls GenerateCharaterButtons
+3. GenerateCharaterButtons creates all the characters and populates them with buttons that call CardButton
+4. CardButton associates the Character with the player, then attaches the data to the character card via setTable('Data')
+5. CardButton also calls Characters()
+6. Characters() ensures that each class type is locked when selected
+7. Characters also counts how many characters were selected and sets EndSetup boolean
+8. CardButton calls spawndrawcards to create the buttons on the character cards
+9. CardButton relies on EndSetup boolean and calls Succession
+10. Succession gets called. This inserts the character data into the titles list and sorts it
+10a. It's unclear why Succession uses the 'execute' data
+11. Succession calls BuildAPC() if the game is already setup
+12. BuildAPC calls *all* the other setup methods, starting with BuildTPLTPE()
+
+13. BuildTPLTPE() creates the skill card decks
+14. BuildDestination() creates the destination decks
+15. LoyaltyDeck() creates the loyalty deck and mutiny cards
+16. BuildCrisisCards() builds the crisis card deck
+17. BuildSupercrisisCards() builds the supercrisis deck
+18. changeimg() creates the actual board, and the buttons on the board such as Resource tracking, jump tracking, destiny card building. It basically does *all* the game board setup
+19. spawnships() generates all the ship tokens
+20. spawncharacters() takes all the character cards out of the bag and places them, then sets the character data on the card
+
+21. BuildAPC then sets a 10 second timer to shuffle all the decks (why 10 sec?)
+22. BuildAPC sets currentplayer and counter
+23. BuildAPC creates a "spawn crisis board" button and puts it on the 'TestingObject' (token)
+24. ShuffleAll() shuffles all the decks then destroys all the bags used for setup
+
+
+Execute doesn't seem to allow you to reselect a character?
+
+------------------------------
+Dynamic data:
+- Which person is assigned to which characters
+- Whether a character is executed or not
+- Who has which title
+- Which loyalty cards are in front of each player
+- The state of all the trackers
+
+--
 
 
 TODO: Try executing, see what happens.
