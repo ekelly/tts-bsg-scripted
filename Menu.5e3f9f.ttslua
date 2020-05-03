@@ -1,159 +1,330 @@
+local debug_mode = false
+
+local selectedexpansion = {}
+local selectedobjective = ''
+local selectedpegasus = {}
+local selecteddaybreak = {} -- Daybreak currently does any extra options beside objective, so this is unused
+local selectedexodus = {}
+
+local selectedplayers = 0
+local seatedplayercolors = {}
+
+local BroadCastMessage = false
+local RandomFirstPlayer = true
+local PlayersConnected = {}
+local WaitForPlayersState = false
+
+function Reset()
+    self.clearButtons()
+    selectedexpansion = {Base=true,Pegasus=false,Daybreak=false,Exodus=false}
+    selectedobjective = ''
+    selectedpegasus = {SympatheticCylon=false,UseMotives=false}
+    selectedexodus = {CylonFleet=false,FinalFive=false,PersonalGoals=false}
+    selectedplayers = 0
+    seatedplayercolors = {}
+    BroadCastMessage = false
+    RandomFirstPlayer = true
+    GetConnectedPlayers()
+    WaitForPlayersState = false
+    Menus()
+end
+
 function onload()
     Reset()
+    if debug_mode == true then
+        MyTest()
+    end
+end
+
+-- Setup your debug scenario here
+function MyTest()
+    selectedexpansion = {Base=true,Pegasus=false,Daybreak=false,Exodus=true}
+    selectedobjective = 'Exodus'
+    selectedpegasus = {SympatheticCylon=false,UseMotives=false}
+    selectedexodus = {CylonFleet=false,FinalFive=true,PersonalGoals=true}
+    selectedplayers = 4
+    seatedplayercolors = {"White","Red","Orange","Teal"}
+    RandomFirstPlayer = false
+end
+
+function GetConnectedPlayers()
+    PlayersConnected = Player.getPlayers()
+    for i, PlayerRef in ipairs(PlayersConnected) do
+        print("Player " .. tostring(i) .. ":  " .. PlayerRef.steam_name)
+        print("-- Color:  " .. PlayerRef.color)
+        --print("-- Seated: " .. tostring(PlayerRef.seated))
+    end
+    --Global.call("print_r",Player.getColors())
+    --Global.call("print_r",Player.getAvailableColors())
+    --GetNumberOfSeatedPlayers()
+    --Global.call("print_r",Player.getAvailableColors())
+end
+
+--function GetNumberOfSeatedPlayers()
+    --local NumSeated = 0
+    --local AvailColors = Player.getAvailableColors()
+    --for _, PlayerRef in ipairs(PlayersConnected) do
+        --for _, AvailColor in ipairs(AvailColors) do
+            --if PlayerRef.color == AvailColor then
+                --NumSeated = NumSeated + 1
+                --break
+            --end
+        --end
+    --end
+    --print("Num Seated ", NumSeated)
+    --return NumSeated
+--end
+
+function onPlayerConnect(person)
+    print("Player Connecting Color: " .. person.color)
+    GetConnectedPlayers()
+    if WaitForPlayersState == true then
+        WaitForPlayers()
+    end
+end
+
+function onPlayerDisconnect(person)
+    print("Player Disconnecting Color: " .. person.color)
+    GetConnectedPlayers()
+    if WaitForPlayersState == true then
+        WaitForPlayers()
+    end
+end
+
+function onPlayerChangeColor(color)
+    print("Player Changing Color: " ..color)
+    GetConnectedPlayers()
+    if WaitForPlayersState == true then
+        WaitForPlayers()
+    end
 end
 
 function Menus()
+    self.createButton({label = 'Battlestar Galactica: Tachyon Edition', click_function = 'Null', rotation = {0, 0, 0},
+    position = {0, 1, -6.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
     self.createButton({label = 'Expansions', click_function = 'Null', rotation = {0, 0, 0},
-    position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    position = {0, 1, -3.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
     self.createButton({label = '[ ] Pegasus', click_function = 'Pegasus', rotation = {0, 0, 0},
-    position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
-    self.createButton({label = '[ ] Daybreak', click_function = 'Daybreak', rotation = {0, 0, 0},
-    position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    position = {0, 1, -1.5}, width = 2000, height = 550, font_size = 300, function_owner = self})
     self.createButton({label = '[ ] Exodus', click_function = 'Exodus', rotation = {0, 0, 0},
-    position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
-    self.createButton({label = 'Next', click_function = 'Next', rotation = {0, 0, 0},
+    position = {0, 1, 0.5}, width = 2000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = '[ ] Daybreak', click_function = 'Daybreak', rotation = {0, 0, 0},
+    position = {0, 1, 2.5}, width = 2000, height = 550, font_size = 300, function_owner = self})
+    self.createButton({label = 'Next', click_function = 'PegasusOptions', rotation = {0, 0, 0},
     position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
     self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
     position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
 end
 
-function Next()
+function PegasusOptions()
+    if debug_mode == true then
+        CommitOptions()
+        return
+    end
     self.clearButtons()
-    if selectedexpansion[2] == true then
+    if selectedexpansion.Pegasus == true then
         self.createButton({label = 'Pegasus Options', click_function = 'Null', rotation = {0, 0, 0},
-        position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
-        if selectedDestination == '' then
-            self.createButton({label = '[ ] New Caprica Destination', click_function = 'NewCaprica', rotation = {0, 0, 0},
-            position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        position = {0, 1, -6.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
+        if selectedobjective == '' then
+            self.createButton({label = '[ ] New Caprica Objective', click_function = 'NewCaprica', rotation = {0, 0, 0},
+            position = {0, 1, -4.5}, width = 4400, height = 550, font_size = 300, function_owner = self})
         end
-        if selectedexpansion[3] == false then
-            self.createButton({label = '[ ] Include Sympathetic Cylon', click_function = 'SympatheticCyclon', rotation = {0, 0, 0},
-            position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        if selectedexpansion.Daybreak == false then
+            self.createButton({label = '[ ] Include Sympathetic Cylon', click_function = 'SympatheticCylon', rotation = {0, 0, 0},
+            position = {0, 1, -2.5}, width = 4400, height = 550, font_size = 300, function_owner = self})
+            self.createButton({label = '[ ] Replace Agenda Cards\nWith Motives', click_function = 'Replace', rotation = {0, 0, 0},
+            position = {0, 1, -0.5}, width = 4400, height = 800, font_size = 300, function_owner = self})
         end
-
-        if selectedexpansion[3] == false then
-            self.createButton({label = '[ ] Replace Agenda Cards', click_function = 'Replace', rotation = {0, 0, 0},
-            position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
-        end
-        self.createButton({label = 'Next', click_function = 'Next2', rotation = {0, 0, 0},
+        self.createButton({label = 'Next', click_function = 'ExodusOptions', rotation = {0, 0, 0},
         position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
         self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
         position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
-        return
-    end
-    if selectedexpansion[3] == true then
-        Next2()
-        return
-    end
-    if selectedexpansion[4] == true then
-        Next3()
-        return
-    end
-    if selectedexpansion[2] == false and selectedexpansion[3] == false and selectedexpansion[4] == false then
-        Next4()
+    elseif selectedexpansion.Exodus == true then
+        ExodusOptions()
+    elseif selectedexpansion.Daybreak == true then
+        DaybreakOptions()
+    else
+        GeneralOptions()
     end
 end
 
-function Next2()
+function DaybreakOptions()
     self.clearButtons()
-    if selectedexpansion[3] == true then
-        if selectedDestination == '' then
-            self.createButton({label = 'Daybreak Options', click_function = 'Null', rotation = {0, 0, 0},
-            position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
-            self.createButton({label = '[ ] Earth Destination', click_function = 'Searchforhome', rotation = {0, 0, 0},
-            position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
-            self.createButton({label = 'Next', click_function = 'Next3', rotation = {0, 0, 0},
-            position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
-            self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
-            position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
-            return
-        else
-            Next3()
-            return
-        end
-    end
-    if selectedexpansion[4] == true then
-        Next3()
-        return
-    end
-    if selectedexpansion[3] == false and selectedexpansion[4] == false then
-        Next4()
+    if selectedexpansion.Daybreak == true and selectedobjective == '' then
+        self.createButton({label = 'Daybreak Options', click_function = 'Null', rotation = {0, 0, 0},
+        position = {0, 1, -6.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
+        self.createButton({label = '[ ] Earth Objective', click_function = 'Searchforhome', rotation = {0, 0, 0},
+        position = {0, 1, -4.5}, width = 3000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = 'Next', click_function = 'GeneralOptions', rotation = {0, 0, 0},
+        position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
+        position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+    else
+        GeneralOptions()
     end
 end
 
-function Next3()
+function ExodusOptions()
     self.clearButtons()
-    if selectedexpansion[4] == true then
+    if selectedexpansion.Exodus == true then
         self.createButton({label = 'Exodus Options', click_function = 'Null', rotation = {0, 0, 0},
-        position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
-        if selectedDestination == '' then
-            self.createButton({label = '[ ] Ionian Nebula Destination', click_function = 'IonianNebula', rotation = {0, 0, 0},
-            position = {0, 1, -5}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        position = {0, 1, -6.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
+        if selectedobjective == '' then
+            self.createButton({label = '[ ] Ionian Nebula Objective', click_function = 'IonianNebula', rotation = {0, 0, 0},
+            position = {0, 1, -4.5}, width = 4000, height = 550, font_size = 300, function_owner = self})
         end
         self.createButton({label = '[ ] Cylon Fleet Board', click_function = 'CylonFleetBoard', rotation = {0, 0, 0},
-        position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        position = {0, 1, -2.5}, width = 4000, height = 550, font_size = 300, function_owner = self})
         self.createButton({label = '[ ] Final Five Loyalty Cards', click_function = 'FinalFive', rotation = {0, 0, 0},
-        position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        position = {0, 1, -0.5}, width = 4000, height = 550, font_size = 300, function_owner = self})
         self.createButton({label = '[ ] Peronsal Goal Cards', click_function = 'PeronsalGoals', rotation = {0, 0, 0},
-        position = {0, 1, 1}, width = 4000, height = 550, font_size = 300, function_owner = self})
-        self.createButton({label = 'Next', click_function = 'Next4', rotation = {0, 0, 0},
+        position = {0, 1, 1.5}, width = 4000, height = 550, font_size = 300, function_owner = self})
+        self.createButton({label = 'Next', click_function = 'DaybreakOptions', rotation = {0, 0, 0},
         position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
         self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
         position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
-        return
-    end
-    if selectedexpansion[4] == false then
-        Next4()
-        return
+    elseif selectedexpansion.Daybreak == true then
+        DaybreakOptions()
+    else
+        GeneralOptions()
     end
 end
 
-function Next4(object, playerColor)
+function GeneralOptions(object, playerColor)
     self.clearButtons()
     self.createButton({label = 'Number of Players', click_function = 'Null', rotation = {0, 0, 0},
-    position = {0, 1, -7}, width = 4000, height = 550, font_size = 300, function_owner = self})
+    position = {0, 1, -6.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
     self.createButton({label = '3', click_function = 'threeplayer', rotation = {0, 0, 0},
-    position = {-6, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    position = {-6, 1, -4.5}, width = 500, height = 550, font_size = 300, function_owner = self})
     self.createButton({label = '4', click_function = 'fourplayer', rotation = {0, 0, 0},
-    position = {-3, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    position = {-3, 1, -4.5}, width = 500, height = 550, font_size = 300, function_owner = self})
     self.createButton({label = '5', click_function = 'fiveplayer', rotation = {0, 0, 0},
-    position =  {0, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    position =  {0, 1, -4.5}, width = 500, height = 550, font_size = 300, function_owner = self})
     self.createButton({label = '6', click_function = 'sixplayer', rotation = {0, 0, 0},
-    position = {3, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
-    if selectedexpansion[2] == true or selectedexpansion[3] == true then
+    position = {3, 1, -4.5}, width = 500, height = 550, font_size = 300, function_owner = self})
+    if selectedexpansion.Pegasus == true or selectedexpansion.Daybreak == true then
         self.createButton({label = '7', click_function = 'sevenplayer', rotation = {0, 0, 0},
-        position =  {6, 1, -5}, width = 500, height = 550, font_size = 300, function_owner = self})
+        position =  {6, 1, -4.5}, width = 500, height = 550, font_size = 300, function_owner = self})
     end
     self.createButton({label = 'Settings', click_function = 'Null', rotation = {0, 0, 0},
-    position = {0, 1, -3}, width = 4000, height = 550, font_size = 300, function_owner = self})
-    self.createButton({label = '[ ] Promoted Only Buttons', click_function = 'HostLockDown', rotation = {0, 0, 0},
-    position = {0, 1, -1}, width = 4000, height = 550, font_size = 300, function_owner = self})
-    self.createButton({label = '[ ] Broad Cast Changes', click_function = 'MessageType', rotation = {0, 0, 0},
-    position = {0, 1, 1}, width = 4000, height = 550, font_size = 300, function_owner = self})
-    self.createButton({label = 'Next', click_function = 'Next5', rotation = {0, 0, 0},
+    position = {0, 1, -2.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
+    self.createButton({label = '[ ] Broadcast Changes to Screen', click_function = 'MessageType', rotation = {0, 0, 0},
+    position = {0, 1, -0.5}, width = 5000, height = 800, font_size = 300, function_owner = self})
+    self.createButton({label = '[X] Pick Random Starting Player', click_function = 'RandomFirst', rotation = {0, 0, 0},
+    position = {0, 1, 1.5}, width = 5000, height = 800, font_size = 300, function_owner = self})
+    self.createButton({label = 'Next', click_function = 'WaitForPlayers', rotation = {0, 0, 0},
     position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
     self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
     position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
 end
 
-function Next5(object, playerColor)
-    if selectedDestination == '' then
-        selectedDestination = 'Kobol'
+function WaitForPlayers(object, playerColor)
+    WaitForPlayersState = true
+    self.clearButtons()
+    local NumSeated = #getSeatedPlayers()
+    --local ReadyText = 'Ready Players ' .. tostring(NumSeated) .. '/' .. #getSeatedPlayers()
+    local ReadyText = 'Ready Players ' .. tostring(NumSeated) .. '/' .. selectedplayers
+    if selectedplayers == 0 then
+        ReadyText = 'Ready Players ' .. tostring(NumSeated)
     end
-    Global.call('save',{selectedexpansion,selectedDestination,selectedpegasus,selecteddaybreak,selectedexodus,selectedplayers})
+    self.createButton({label = ReadyText, click_function = 'Null', rotation = {0, 0, 0},
+    position = {0, 1, -6.5}, width = 0, height = 0, font_size = 400, function_owner = self, font_color = {1,1,1}})
+    local num_slots = selectedplayers
+    if num_slots == 0 then
+        num_slots = #PlayersConnected
+    end
+    for i=1,num_slots,1 do
+--    for i, PlayerRef in ipairs(PlayersConnected) do
+        local SlotText = 'Empty'
+        local SlotColor = {1,1,1}
+        if i<=#PlayersConnected then
+            SlotText = PlayersConnected[i].steam_name
+            SlotColor = PlayersConnected[i].color
+        end
+        self.createButton({label = SlotText, click_function = 'Null', rotation = {0, 0, 0},
+        position = {0, 1, -6+i*1.6}, width = 0, height = 0, font_size = 300, function_owner = self, font_color = SlotColor})
+    end
+    self.createButton({label = 'Start', click_function = 'CommitOptions', rotation = {0, 0, 0},
+    position = {5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self, color = StartColor})
+    self.createButton({label = 'Reset', click_function = 'Reset', rotation = {0, 0, 0},
+    position = {-5, 1, 7}, width = 1000, height = 550, font_size = 300, function_owner = self})
+    local params = {object=object, playerColor=playerColor}
+    ResetStartButton(params)
+end
+
+function CommitOptions(object, playerColor)
+    if selectedobjective == '' then
+        selectedobjective = 'Base'
+    end
+    -- If we are forcing to commit then add unseated players
+    if selectedplayers < 3 then
+        selectedplayers = 3
+    end
+    local unseated_player_count = selectedplayers
+    for _, color in ipairs(Player.getAvailableColors()) do
+        if Player[color].seated == true then
+            unseated_player_count = unseated_player_count - 1
+        end
+    end
+    for _, color in ipairs(Player.getAvailableColors()) do
+        if Player[color].seated == true then
+            table.insert(seatedplayercolors,color)
+        elseif unseated_player_count > 0 then
+            unseated_player_count = unseated_player_count - 1
+            table.insert(seatedplayercolors,color)
+        end
+    end
+    math.randomseed(os.clock())
+    local FirstPlayer = 0
+    if RandomFirstPlayer == true then
+        FirstPlayer = math.random(1,#seatedplayercolors)
+        --print('First ' .. FirstPlayer)
+    end
+    --Global.call("print_r",seatedplayercolors)
+
+    Global.call('save',{selectedexpansion,selectedobjective,selectedpegasus,selecteddaybreak,selectedexodus,seatedplayercolors,debug_mode,{BroadCastMessage=BroadCastMessage},FirstPlayer})
     self.destruct()
+end
+
+function ResetStartButton(params)
+    local StartColor = {1,1,1}
+    local StartFunction = 'CommitOptions'
+    if #getSeatedPlayers()<3 or (selectedplayers > 0 and #getSeatedPlayers() < selectedplayers) then
+        StartColor = {0.5,0.5,0.5}
+        StartFunction = 'NotEnoughPlayers'
+    elseif (selectedplayers > 0 and #getSeatedPlayers() > selectedplayers) then
+        StartColor = {0.5,0.5,0.5}
+        StartFunction = 'TooManyPlayers'
+    end
+    local button, index = FindButton(params.object, 'CommitOptions')
+    params.object.editButton({index = index, label = 'Start', click_function = StartFunction, color = StartColor})
+    Timer.destroy('UseEmptySeatsTimer')
+end
+
+function NotEnoughPlayers(object, playerColor)
+    broadcastToAll("Not Enough Seated Players. Start Anyway?", stringColorToRGB("White"))
+    local _, index = FindButton(object, 'NotEnoughPlayers')
+    object.editButton({index = index, label = 'OK?', click_function = 'CommitOptions',color = {1,1,1}})
+    local params = {object=object, playerColor=playerColor}
+    Timer.create({identifier = 'UseEmptySeatsTimer', function_name = 'ResetStartButton', parameters = params, delay = 2})
+end
+
+function TooManyPlayers()
+    broadcastToAll("Too Many Players", stringColorToRGB("Red"))
 end
 
 function removeplayer(index)
     --WOKRING
     local index = index - 2
     local max = 4
-    if selectedexpansion[2] == true or selectedexpansion[3] == true then
+    if selectedexpansion.Pegasus == true or selectedexpansion.Daybreak == true then
         max = 5
     end
     for i=1,max,1 do
         if index != i then
             self.removeButton(i)
+        else
+            self.editButton({index = i,click_function = 'Null'})
         end
     end
 end
@@ -182,84 +353,71 @@ end
 function Null(object, playerColor)
 end
 
-
-function Reset()
-    self.clearButtons()
-    selectedexpansion = {true,false,false,false}
-    selectedDestination = ''
-    selectedpegasus = {false,false,false}
-    selecteddaybreak = {false}
-    selectedexodus = {false,false,false,false}
-    selectedplayers = 0
-    Menus()
-end
-
-function SympatheticCyclon(object, playerColor)
-    selectedpegasus[2] = FlipText(object,'SympatheticCyclon','Include Sympathetic Cylon')
+function SympatheticCylon(object, playerColor)
+    selectedpegasus.SympatheticCylon = FlipText(object,'SympatheticCylon','Include Sympathetic Cylon')
 end
 
 function CylonFleetBoard(object, playerColor)
-    selectedexodus[2] = FlipText(object,'CylonFleetBoard','Cylon Fleet Board')
+    selectedexodus.CylonFleet = FlipText(object,'CylonFleetBoard','Cylon Fleet Board')
 end
 
 function FinalFive(object, playerColor)
-    selectedexodus[3] = FlipText(object,'FinalFive','Final Five Loyalty Cards')
+    selectedexodus.FinalFive = FlipText(object,'FinalFive','Final Five Loyalty Cards')
 end
 
 function PeronsalGoals(object, playerColor)
-    selectedexodus[4] = FlipText(object,'PeronsalGoals','Personal Goal Cards')
+    selectedexodus.PersonalGoals = FlipText(object,'PeronsalGoals','Personal Goal Cards')
 end
 
 function NewCaprica(object, playerColor)
-    selectedpegasus[1] = FlipText(object,'NewCaprica','New Caprica Destination')
-    if selectedpegasus[1] == false then
-        selectedDestination = ''
+    local objective = FlipText(object,'NewCaprica','New Caprica Objective')
+    if objective == false then
+        selectedobjective = ''
     else
-        selectedDestination = 'NewCaprica'
+        selectedobjective = 'Pegasus'
     end
 end
 
 function Searchforhome(object, playerColor)
-    selecteddaybreak[1] = FlipText(object,'Searchforhome','Earth Destination')
-    if selecteddaybreak[1] == false then
-        selectedDestination = ''
+    local objective = FlipText(object,'Searchforhome','Earth Objective')
+    if objective == false then
+        selectedobjective = ''
     else
-        selectedDestination = 'Earth'
+        selectedobjective = 'Daybreak'
     end
 end
 
 function IonianNebula(object, playerColor)
-    selectedexodus[1] = FlipText(object,'IonianNebula','Ionian Nebula Destination')
-    if selectedexodus[1] == false then
-        selectedDestination = ''
+    local objective = FlipText(object,'IonianNebula','Ionian Nebula Objective')
+    if objective == false then
+        selectedobjective = ''
     else
-        selectedDestination = 'IonianNebula'
+        selectedobjective = 'Exodus'
     end
 end
 
 function Replace(object, playerColor)
-    selectedpegasus[3] = FlipText(object,'Replace','Replace Agenda Cards')
+    selectedpegasus.UseMotives = FlipText(object,'Replace','Replace Agenda Cards\nWith Motives')
 end
 
 function Pegasus(object, playerColor)
-    selectedexpansion[2] = FlipText(object,'Pegasus','Pegasus')
+    selectedexpansion.Pegasus = FlipText(object,'Pegasus','Pegasus')
 end
 
 function Daybreak(object, playerColor)
-    selectedexpansion[3] = FlipText(object,'Daybreak','Daybreak')
+    selectedexpansion.Daybreak = FlipText(object,'Daybreak','Daybreak')
 end
 
 function Exodus(object, playerColor)
-    selectedexpansion[4] = FlipText(object,'Exodus','Exodus')
-end
-
-
-function HostLockDown(object, playerColor)
-    LockType = FlipText(object,'HostLockDown','Promoted Only Buttons')
+    selectedexpansion.Exodus = FlipText(object,'Exodus','Exodus')
 end
 
 function MessageType(object, playerColor)
-    BroadCastMessage = FlipText(object,'MessageType','Broad Cast Changes')
+    BroadCastMessage = FlipText(object,'MessageType','Broadcast Changes to Screen')
+end
+
+function RandomFirst(object, playerColor)
+    RandomFirstPlayer = FlipText(object,'RandomFirst','Pick Random Starting Player')
 end
 
 function FindButton(object, c_function)
