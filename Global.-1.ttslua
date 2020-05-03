@@ -100,6 +100,7 @@ local CylonJumpLocation = 0
 
 local SCStateEnum = { startcheck=0, inprogress=1, layout=2, returncards=3 }
 
+local skillcheck_startingplayer = -1
 local skillcheck_currentplayer = 0
 local skillcheck_counter = 0
 local skillcheck_state = SCStateEnum.startcheck
@@ -172,6 +173,34 @@ function print_r ( t )
     print()
 end
 
+function onPlayerTurnStart(player_color_start, player_color_previous)
+    local num_players = #PlayerTable
+    for i = 1, num_players, 1 do
+        if PlayerTable[i].PlayerColor == player_color_start then
+            skillcheck_startingplayer = i
+            break
+        end
+    end
+end
+
+function onScriptingButtonDown(index, player_color)
+    local hoverObj = Player[player_color].getHoverObject()
+    -- Scripting button 1 while hovering over a skill card returns it to the skill deck
+    if hoverObj.name == 'Card' and index == 1 then
+        returnCardToDeck(hoverObj)
+    end
+end
+
+function returnCardToDeck(obj)
+    local Cards = {'TR','P','L','T','PI','E'}
+    local CardsPos = {-11, -6.2, -1.3, 3.35, 8.1, 12.9}
+    for y = 1, 6, 1 do
+        if obj.getDescription() == Cards[y] then
+            obj.setPosition({CardsPos[y], 1.3, -20})
+        end
+    end
+end
+
 --Runs any time the board is saved
 function onSave()
     --We make a table of data we want to save. WE CAN ONLY SAVE 1 TABLE.
@@ -204,6 +233,7 @@ function onSave()
     data_to_save["Jump"] = JumpLocation
     data_to_save["CylonJump"] = CylonJumpLocation
 
+    data_to_save["SCStartingPlayer"] = skillcheck_startingplayer
     data_to_save["SCCurrentPlayer"] = skillcheck_currentplayer
     data_to_save["SCCounter"] = skillcheck_counter
     data_to_save["SCState"] = skillcheck_state
@@ -241,7 +271,11 @@ function StartSkillCheck(object, playerColor)
     -- Find player to my left
     for y, test in ipairs(PlayerTable) do
         if test.PlayerColor == playerColor then
-            skillcheck_currentplayer = y + 1
+            if skillcheck_startingplayer <= 0 then
+                skillcheck_currentplayer = y + 1
+            else
+                skillcheck_currentplayer = skillcheck_startingplayer + 1
+            end
             if skillcheck_currentplayer > #PlayerTable then
                 skillcheck_currentplayer = 1
             end
@@ -1080,7 +1114,7 @@ end
 function Population()
 end
 
-function IncreaseFood(object, playerColor))
+function IncreaseFood(object, playerColor)
     foodcount = foodcount + 1
     if foodcount > 15 then
         foodcount = 15
@@ -1088,7 +1122,7 @@ function IncreaseFood(object, playerColor))
     updateDisplay(object,FoodDisplay,foodcount,STARTING_FOOD,playerColor,true)
 end
 
-function DecreaseFood(object, playerColor))
+function DecreaseFood(object, playerColor)
     foodcount = foodcount - 1
     if foodcount < 0 then
         foodcount = 0
@@ -1096,7 +1130,7 @@ function DecreaseFood(object, playerColor))
     updateDisplay(object,FoodDisplay,foodcount,STARTING_FOOD,playerColor,false)
 end
 
-function IncreaseFuel(object, playerColor))
+function IncreaseFuel(object, playerColor)
     fuelcount = fuelcount + 1
     if fuelcount > 15 then
         fuelcount = 15
@@ -1104,7 +1138,7 @@ function IncreaseFuel(object, playerColor))
     updateDisplay(object,FuelDisplay,fuelcount,STARTING_FUEL,playerColor,true)
 end
 
-function DecreaseFuel(object, playerColor))
+function DecreaseFuel(object, playerColor)
     fuelcount = fuelcount - 1
     if fuelcount < 0 then
         fuelcount = 0
@@ -1112,7 +1146,7 @@ function DecreaseFuel(object, playerColor))
     updateDisplay(object,FuelDisplay,fuelcount,STARTING_FUEL,playerColor,false)
 end
 
-function IncreasePopulation(object, playerColor))
+function IncreasePopulation(object, playerColor)
     populationcount = populationcount + 1
     if populationcount > 15 then
         populationcount = 15
@@ -1120,7 +1154,7 @@ function IncreasePopulation(object, playerColor))
     updateDisplay(object,PopulationDisplay,populationcount,STARTING_POPULATION,playerColor,true)
 end
 
-function DecreasePopulation(object, playerColor))
+function DecreasePopulation(object, playerColor)
     populationcount = populationcount - 1
     if populationcount < 0 then
         populationcount = 0
@@ -1971,6 +2005,7 @@ function onload(saved_data)
         end
 
         if (loaded_data["SCCurrentPlayer"] ~= nil) then
+            skillcheck_startingplayer = loaded_data["SCStartingPlayer"]
             skillcheck_currentplayer = loaded_data["SCCurrentPlayer"]
             skillcheck_counter = loaded_data["SCCounter"]
             skillcheck_state = loaded_data["SCState"]
@@ -2555,4 +2590,3 @@ function Notes(playerColor, Character, Type)
     note = note .. msg
     setNotes(note)
 end
-
